@@ -10,3 +10,5 @@ hevm*
 
 # Flattened functions
 /flattened-contracts/functions
+node_modules
+/artifacts

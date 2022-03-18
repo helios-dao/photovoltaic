@@ -1,0 +1,12 @@
+{
+  "name": "protocol",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@openzeppelin/hardhat-upgrades": "^1.16.1",
+    "ethers": "^5.6.1",
+    "hardhat": "^2.9.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.5.0"
+  }
+}
