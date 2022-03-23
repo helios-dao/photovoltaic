@@ -7,9 +7,24 @@ require('hardhat-deploy');
 require("@nomiclabs/hardhat-ethers");
 require('hardhat-ethernal');
 
+const RINKEBY_RPC_URL =
+  process.env.RINKEBY_RPC_URL ||
+  "https://eth-rinkeby.alchemyapi.io/v2/KE1qQBCNVse9h7NAa_re7cfQWtaZy1ix"
+
 module.exports = {
+  defaultNetwork: "hardhat",
   solidity: "0.6.11",
   networks: {
+    hardhat: {
+      forking: {
+        url: RINKEBY_RPC_URL,
+        enabled: false,
+      },
+      chainId: 31337,
+    },
+    localhost: {
+      chainId: 31337,
+    },
     rinkeby: {
       url: "https://eth-rinkeby.alchemyapi.io/v2/KE1qQBCNVse9h7NAa_re7cfQWtaZy1ix"
     }

@@ -1,10 +1,10 @@
 // scripts/deploy.js
 
 const fs = require('fs');
-const { ethers } = require('hardhat');
+const { hre } = require('hardhat');
 
 async function main () {  // We receive the contract to deploy
-  const contractName = 'CollateralLocker2' // Change this for other contract
+  const contractName = 'MapleGlobals' // Change this for other contract
   const constructorArgs = ['0x0', '0x0']    // Put constructor args (if any) here for your contract
 
   // Note that the script needs the ABI which is generated from the compilation artifact.
@@ -13,18 +13,21 @@ async function main () {  // We receive the contract to deploy
   const artifactsPath = `artifacts/packages/protocol/contracts/${contractName}.sol/${contractName}.json` // Change this for different path
 
   const metadata = JSON.parse(fs.readFileSync(artifactsPath).toString());
-
-  // 'web3Provider' is a remix global variable object
-  // const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-  console.log('yo')
-  const signer = (await ethers.getSigners())[0];
-  console.log( 'signer', signer)
-
-  let factory = new ethers.ContractFactory(metadata.abi, metadata.bytecode, signer);
-  // const factory = await ethers.getContractFactory('CollateralLocker');
+  
+  await hre.run('compile');
+  let factory = new hre.ContractFactory(metadata.abi, metadata.bytecode, signer);
 
   let contract = await factory.deploy(...constructorArgs);
+  await contract.deployed();
+
   console.log('TestUtil deployed to:', contract.address);
+
+  console.log('Deploying to ethernal')
+  await hre.ethernal.push({
+    name: contract.name,
+    address: contract.address
+})
+
 }
 
 main()
