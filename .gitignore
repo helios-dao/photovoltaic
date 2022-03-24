@@ -12,3 +12,4 @@ hevm*
 /flattened-contracts/functions
 node_modules
 /artifacts
+/deployments

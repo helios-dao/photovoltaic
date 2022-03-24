@@ -16,7 +16,7 @@ module.exports = {
   },
   paths: {
     sources: "./packages/protocol/contracts",
-    deploy: "./deploys/protocol"
+    deploy: "./deploy/protocol"
   },
   namedAccounts: {
     deployer: {
