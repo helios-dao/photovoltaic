@@ -26,10 +26,10 @@ key:
 - Util: util lib that's imported in a bunch of contracts... does it really need to be deployed?
 - PoolLib: pool lib; necessary?
 - LoanLib: loan lib; necessary?
-- MapleTreasury: the treasury, holds all the money
-- RepaymentCalc: lib; necessary?
-- LateFeeCalc: lib; necessary?
-- PremiumCalc: lib; necessary?
+-* MapleTreasury: the treasury, holds all the money
+-* RepaymentCalc:
+-* LateFeeCalc:
+-* PremiumCalc:
 -* PoolFactory:
 -* StakeLockerFactory:
 -* LiquidityLockerFactory:
@@ -40,4 +40,5 @@ key:
 -* MplRewardsFactory:
 -* PriceOracleUSDC: oracle (named UsdOracle)
 -* PriceOracleWBTC: oracle (named ChainlinkOracle)
+-+ one more gnosis proxy to be the owner of the PriceOracleWBTC
 

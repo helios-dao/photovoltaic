@@ -5,18 +5,23 @@
 // require('@openzeppelin/hardhat-upgrades');
 require('hardhat-deploy');
 require("@nomiclabs/hardhat-ethers");
-require('hardhat-ethernal');
+// require('hardhat-ethernal');
 
 module.exports = {
+  // defaultNetwork: "hardhat",
   solidity: "0.6.11",
   networks: {
     rinkeby: {
       url: "https://eth-rinkeby.alchemyapi.io/v2/KE1qQBCNVse9h7NAa_re7cfQWtaZy1ix"
+    },
+    hardhat: {
+      chainId: 1337,
+      allowUnlimitedContractSize: true
     }
   },
   paths: {
     sources: "./packages/protocol/contracts",
-    deploy: "./deploy/protocol"
+    deploy: "./deploy"
   },
   namedAccounts: {
     deployer: {
