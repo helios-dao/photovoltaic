@@ -22,14 +22,14 @@ module.exports = async ({
     console.log(`Deployed ${name} at ${contract.address}`);
   };
 
-  const governor = deployer;
-  const mplToken = deployer;
-  const globalAdmin = deployer;
-  const aggregator = deployer;
-  const assetAddress = deployer;
-  const owner = deployer;
-  const fundsToken = deployer;
-  const uniswapRouter = deployer;
+  const governor = deployer;  // proxy contract
+  const mplToken = deployer;  // helios token contract
+  const globalAdmin = deployer;  // proxy contract
+  const aggregator = deployer;  // chainlink USD-WBTC contract
+  const assetAddress = deployer;  // WBTC token contract
+  const owner = deployer;  // proxy contract
+  const fundsToken = deployer;  // USD token contract
+  const uniswapRouter = deployer;  // uniswap router contract
   const lateFee = 0;
   const premiumFee = 0;
 

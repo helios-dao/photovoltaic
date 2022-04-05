@@ -42,3 +42,12 @@ key:
 -* PriceOracleWBTC: oracle (named ChainlinkOracle)
 -+ one more gnosis proxy to be the owner of the PriceOracleWBTC
 
+4/1/22:
+- protocol successfully deployed locally (apparently)
+- next steps:
+  * add token to deploy scripts
+  * update deploy scripts to include actual dependency addresses
+  * replace mentions of Maple with Helios in contracts
+  * deploy to testnet
+  * figure out which functions are used by the dapp (check transactions for each live Maple contract for clues)
+  * write some integration tests?
