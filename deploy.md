@@ -48,7 +48,7 @@ DEPLOYER_ADDRESS=
 DEPLOYER_PRIVATE_KEY=
 ```
 
-`WBTC_ORACLE_OWNER`, `WBTC_ORACLE_OWNER`, `PROTOCOL_GOVERNOR`, and `PROTOCOL_GLOBAL_ADMIN` should be your own MetaMask wallet address, and `DEPLOYER_PRIVATE_KEY` should its private key.
+`WBTC_ORACLE_OWNER`, `WBTC_ORACLE_OWNER`, `PROTOCOL_GOVERNOR`, and `PROTOCOL_GLOBAL_ADMIN` should be your own MetaMask wallet address, and `DEPLOYER_PRIVATE_KEY` should its private key. Alternatively (and this is what we'll need to do on Mainnet) go to [https://gnosis-safe.io](https://gnosis-safe.io) and create a safe for each of those.
 
 Then run: <br>
 ``` yarn hardhat deploy --network rinkeby ```
