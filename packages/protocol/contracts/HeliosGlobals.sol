@@ -10,23 +10,23 @@ import "./interfaces/ISubFactory.sol";
 
 interface ICalc { function calcType() external view returns (uint8); }
 
-/// @title MapleGlobals maintains a central source of parameters and allowlists for the Maple protocol.
-contract MapleGlobals {
+/// @title HeliosGlobals maintains a central source of parameters and allowlists for the Helios protocol.
+contract HeliosGlobals {
 
     using SafeMath for uint256;
 
-    address public immutable mpl;         // The ERC-2222 Maple Token for the Maple protocol.
+    address public immutable mpl;         // The ERC-2222 Helios Token for the Helios protocol.
 
     address public pendingGovernor;       // The Governor that is declared for governorship transfer. Must be accepted for transfer to take effect.
-    address public governor;              // The Governor responsible for management of global Maple variables.
-    address public mapleTreasury;         // The MapleTreasury is the Treasury where all fees pass through for conversion, prior to distribution.
+    address public governor;              // The Governor responsible for management of global Helios variables.
+    address public mapleTreasury;         // The HeliosTreasury is the Treasury where all fees pass through for conversion, prior to distribution.
     address public globalAdmin;           // The Global Admin of the whole network. Has the power to switch off/on the functionality of entire protocol.
 
     uint256 public defaultGracePeriod;    // Represents the amount of time a Borrower has to make a missed payment before a default can be triggered.
     uint256 public swapOutRequired;       // Represents minimum amount of Pool cover that a Pool Delegate has to provide before they can finalize a Pool.
     uint256 public fundingPeriod;         // Amount of time to allow a Borrower to drawdown on their Loan after funding period ends.
     uint256 public investorFee;           // Portion of drawdown that goes to the Pool Delegates and individual Lenders.
-    uint256 public treasuryFee;           // Portion of drawdown that goes to the MapleTreasury.
+    uint256 public treasuryFee;           // Portion of drawdown that goes to the HeliosTreasury.
     uint256 public maxSwapSlippage;       // Maximum amount of slippage for Uniswap transactions.
     uint256 public minLoanEquity;         // Minimum amount of LoanFDTs required to trigger liquidations (basis points percentage of totalSupply).
     uint256 public stakerCooldownPeriod;  // Period (in secs) after which Stakers are allowed to unstake  their BPTs  from a StakeLocker.
@@ -40,7 +40,7 @@ contract MapleGlobals {
     mapping(address => bool) public isValidCollateralAsset;           // Mapping of valid Collateral Assets.
     mapping(address => bool) public validCalcs;                       // Mapping of valid Calculators
     mapping(address => bool) public isValidPoolDelegate;              // Mapping of valid Pool Delegates (prevent unauthorized/unknown addresses from creating Pools).
-    mapping(address => bool) public isValidBalancerPool;              // Mapping of valid Balancer Pools that Maple has approved for BPT staking.
+    mapping(address => bool) public isValidBalancerPool;              // Mapping of valid Balancer Pools that Helios has approved for BPT staking.
 
     // Determines the liquidation path of various assets in Loans and the Treasury.
     // The value provided will determine whether or not to perform a bilateral or triangular swap on Uniswap.
@@ -81,7 +81,7 @@ contract MapleGlobals {
         @dev   Constructor function.
         @dev   It emits an `Initialized` event.
         @param _governor    Address of Governor.
-        @param _mpl         Address of the ERC-2222 Maple Token for the Maple protocol.
+        @param _mpl         Address of the ERC-2222 Helios Token for the Helios protocol.
         @param _globalAdmin Address the Global Admin.
     */
     constructor(address _governor, address _mpl, address _globalAdmin) public {
@@ -302,11 +302,11 @@ contract MapleGlobals {
     }
 
     /**
-        @dev   Sets the MapleTreasury. Only the Governor can call this function.
+        @dev   Sets the HeliosTreasury. Only the Governor can call this function.
         @dev   It emits a `GlobalsParamSet` event.
-        @param _mapleTreasury New MapleTreasury address.
+        @param _mapleTreasury New HeliosTreasury address.
     */
-    function setMapleTreasury(address _mapleTreasury) external isGovernor {
+    function setHeliosTreasury(address _mapleTreasury) external isGovernor {
         require(_mapleTreasury != address(0), "MG:ZERO_ADDR");
         mapleTreasury = _mapleTreasury;
         emit GlobalsAddressSet("MAPLE_TREASURY", _mapleTreasury);

@@ -4,29 +4,29 @@ pragma experimental ABIEncoderV2;
 
 import "./TestUtil.sol";
 
-contract MplRewardsFactoryTest is TestUtil {
+contract HlsRewardsFactoryTest is TestUtil {
 
     function setUp() public {
         setUpGlobals();
-        setUpMplRewardsFactory();
+        setUpHlsRewardsFactory();
     }
 
     function test_constructor() public {
-        MplRewardsFactory _mplRewardsFactory = new MplRewardsFactory(address(globals));  // Setup MplRewardsFactory to support MplRewards creation.
+        HlsRewardsFactory _mplRewardsFactory = new HlsRewardsFactory(address(globals));  // Setup HlsRewardsFactory to support HlsRewards creation.
         assertEq(address(_mplRewardsFactory.globals()), address(globals));
     }
 
-    function test_createMplRewards() public {
+    function test_createHlsRewards() public {
         address mockPool = address(1);  // Fake pool address so a pool doesn't have to be instantiated for PoolFDTs
 
         // Assert permissioning
-        assertTrue(!fakeGov.try_createMplRewards(address(mpl), mockPool));
-        assertTrue(     gov.try_createMplRewards(address(mpl), mockPool));
+        assertTrue(!fakeGov.try_createHlsRewards(address(mpl), mockPool));
+        assertTrue(     gov.try_createHlsRewards(address(mpl), mockPool));
 
-        MplRewards mplRewards = MplRewards(gov.createMplRewards(address(mpl), mockPool));
+        HlsRewards mplRewards = HlsRewards(gov.createHlsRewards(address(mpl), mockPool));
 
         // Validate the storage of mplRewardsFactory
-        assertTrue(mplRewardsFactory.isMplRewards(address(mplRewards)));
+        assertTrue(mplRewardsFactory.isHlsRewards(address(mplRewards)));
 
         // Validate the storage of mplRewards.
         assertEq(address(mplRewards.rewardsToken()), address(mpl));

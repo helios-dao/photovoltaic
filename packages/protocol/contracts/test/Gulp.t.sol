@@ -71,7 +71,7 @@ contract GulpTest is TestUtil {
     }
 
     function test_uniswap_pool_skim() public {
-        setUpUniswapMplUsdcPool(75_000 * WAD, 1_500_000 * USD);
+        setUpUniswapHlsUsdcPool(75_000 * WAD, 1_500_000 * USD);
 
         gov.setGovTreasury(treasury);
         // Drawdown on loan will transfer fee to MPL token contract.
@@ -99,7 +99,7 @@ contract GulpTest is TestUtil {
 
         uint256 usdcBal_preSkim     = usdc.balanceOf(address(uniswapPair));
         uint256 lex_usdcBal_preSkim = usdc.balanceOf(address(lex));
-        
+
         uniswapPair.skim(address(lex)); // Get the extra fund out of it.
 
         uint256 usdcBal_postSkim     = usdc.balanceOf(address(uniswapPair));

@@ -3,15 +3,34 @@
  */
 
 // require('@openzeppelin/hardhat-upgrades');
+require('dotenv-flow').config();
 require('hardhat-deploy');
 require("@nomiclabs/hardhat-ethers");
-// require('hardhat-ethernal');
+require('hardhat-contract-sizer');
 
 module.exports = {
-  // defaultNetwork: "hardhat",
-  solidity: "0.6.11",
+  solidity: {
+    version: "0.6.11",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    },
+  },
+  contractSizer: {
+    except: [
+      ":Loan$",
+      ":Pool$",
+      ":StakeLocker$",
+      "Test",
+      "test",
+    ],
+    runOnCompile: true
+  },
   networks: {
     rinkeby: {
+      accounts: [process.env.DEPLOYER_PRIVATE_KEY],
       url: "https://eth-rinkeby.alchemyapi.io/v2/KE1qQBCNVse9h7NAa_re7cfQWtaZy1ix"
     },
     hardhat: {
@@ -25,9 +44,21 @@ module.exports = {
   },
   namedAccounts: {
     deployer: {
-      default: 0, // here this will by default take the first account as deployer
-      1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
-      4: '0xA296a3d5F026953e17F472B497eC29a5631FB51B' // but for rinkeby it will be a specific address
+      default: 0,
+      1: process.env.DEPLOYER_ADDRESS,
+      4: process.env.DEPLOYER_ADDRESS
+    },
+    globalAdmin: {
+      default: 0,
+      1: process.env.PROTOCOL_GLOBAL_ADMIN
+    },
+    governor: {
+      default: 0,
+      1: process.env.PROTOCOL_GOVERNOR
+    },
+    oracleOwner: {
+      default: 0,
+      1: process.env.WBTC_ORACLE_OWNER
     }
   }
 };

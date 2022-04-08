@@ -2,10 +2,10 @@
 pragma solidity 0.6.11;
 pragma experimental ABIEncoderV2;
 
-import "../../MapleGlobals.sol";
-import "../../MapleTreasury.sol";
-import "../../MplRewards.sol";
-import "../../MplRewardsFactory.sol";
+import "../../HeliosGlobals.sol";
+import "../../HeliosTreasury.sol";
+import "../../HlsRewards.sol";
+import "../../HlsRewardsFactory.sol";
 
 contract Governor {
 
@@ -13,42 +13,42 @@ contract Governor {
     /*** DIRECT FUNCTIONS ***/
     /************************/
 
-    MapleGlobals      globals;
-    MplRewards        mplRewards;
-    MplRewardsFactory mplRewardsFactory;
-    MapleTreasury     treasury;
+    HeliosGlobals      globals;
+    HlsRewards        mplRewards;
+    HlsRewardsFactory mplRewardsFactory;
+    HeliosTreasury     treasury;
 
-    function createGlobals(address mpl) external returns (MapleGlobals) {
-        globals = new MapleGlobals(address(this), mpl, address(1));
+    function createGlobals(address mpl) external returns (HeliosGlobals) {
+        globals = new HeliosGlobals(address(this), mpl, address(1));
         return globals;
     }
 
-    function createMplRewardsFactory() external returns (MplRewardsFactory) {
-        mplRewardsFactory = new MplRewardsFactory(address(globals));
+    function createHlsRewardsFactory() external returns (HlsRewardsFactory) {
+        mplRewardsFactory = new HlsRewardsFactory(address(globals));
         return mplRewardsFactory;
     }
 
-    function createMplRewards(address mpl, address pool) external returns (MplRewards) {
-        mplRewards = MplRewards(mplRewardsFactory.createMplRewards(mpl, pool));
+    function createHlsRewards(address mpl, address pool) external returns (HlsRewards) {
+        mplRewards = HlsRewards(mplRewardsFactory.createHlsRewards(mpl, pool));
         return mplRewards;
     }
 
     // Used for "fake" governors pointing at a globals contract they didn't create
-    function setGovGlobals(MapleGlobals _globals) external {
+    function setGovGlobals(HeliosGlobals _globals) external {
         globals = _globals;
     }
 
-    function setGovMplRewardsFactory(MplRewardsFactory _mplRewardsFactory) external {
+    function setGovHlsRewardsFactory(HlsRewardsFactory _mplRewardsFactory) external {
         mplRewardsFactory = _mplRewardsFactory;
     }
 
     // Used for "fake" governors pointing at a staking rewards contract they don't own
-    function setGovMplRewards(MplRewards _mplRewards) external {
+    function setGovHlsRewards(HlsRewards _mplRewards) external {
         mplRewards = _mplRewards;
     }
 
     // Used for "fake" governors pointing at a treasury contract they didn't create
-    function setGovTreasury(MapleTreasury _treasury) external {
+    function setGovTreasury(HeliosTreasury _treasury) external {
         treasury = _treasury;
     }
 
@@ -56,14 +56,14 @@ contract Governor {
         token.transfer(account, amt);
     }
 
-    /*** MapleGlobals Setters ***/
+    /*** HeliosGlobals Setters ***/
     function setCalc(address calc, bool valid)                                 external { globals.setCalc(calc, valid); }
     function setCollateralAsset(address asset, bool valid)                     external { globals.setCollateralAsset(asset, valid); }
     function setLiquidityAsset(address asset, bool valid)                      external { globals.setLiquidityAsset(asset, valid); }
     function setValidLoanFactory(address factory, bool valid)                  external { globals.setValidLoanFactory(factory, valid); }
     function setValidPoolFactory(address factory, bool valid)                  external { globals.setValidPoolFactory(factory, valid); }
     function setValidSubFactory(address fac, address sub, bool valid)          external { globals.setValidSubFactory(fac, sub, valid); }
-    function setMapleTreasury(address _treasury)                               external { globals.setMapleTreasury(_treasury); }
+    function setHeliosTreasury(address _treasury)                               external { globals.setHeliosTreasury(_treasury); }
     function setGlobalAdmin(address _globalAdmin)                              external { globals.setGlobalAdmin(_globalAdmin); }
     function setPoolDelegateAllowlist(address pd, bool valid)                  external { globals.setPoolDelegateAllowlist(pd, valid); }
     function setInvestorFee(uint256 fee)                                       external { globals.setInvestorFee(fee); }
@@ -82,13 +82,13 @@ contract Governor {
     function setLpWithdrawWindow(uint256 period)                               external { globals.setLpWithdrawWindow(period); }
     function setStakerUnstakeWindow(uint256 period)                            external { globals.setStakerUnstakeWindow(period); }
 
-    /*** MapleTreasury Functions ***/
+    /*** HeliosTreasury Functions ***/
     function setGlobals(address newGlobals)              external { treasury.setGlobals(newGlobals); }
     function reclaimERC20(address asset, uint256 amount) external { treasury.reclaimERC20(asset, amount); }
     function distributeToHolders()                       external { treasury.distributeToHolders(); }
     function convertERC20(address asset)                 external { treasury.convertERC20(asset); }
 
-    /*** MplRewards Setters ***/
+    /*** HlsRewards Setters ***/
     function transferOwnership(address newOwner)      external { mplRewards.transferOwnership(newOwner); }
     function notifyRewardAmount(uint256 reward)       external { mplRewards.notifyRewardAmount(reward); }
     function updatePeriodFinish(uint256 timestamp)    external { mplRewards.updatePeriodFinish(timestamp); }
@@ -101,13 +101,13 @@ contract Governor {
     /*** TRY FUNCTIONS ***/
     /*********************/
 
-    /*** MapleGlobals Setters ***/
+    /*** HeliosGlobals Setters ***/
     function try_setGlobals(address target, address _globals) external returns (bool ok) {
         string memory sig = "setGlobals(address)";
         (ok,) = address(target).call(abi.encodeWithSignature(sig, _globals));
     }
-    function try_createMplRewards(address mpl, address pool) external returns (bool ok) {
-        string memory sig = "createMplRewards(address,address)";
+    function try_createHlsRewards(address mpl, address pool) external returns (bool ok) {
+        string memory sig = "createHlsRewards(address,address)";
         (ok,) = address(mplRewardsFactory).call(abi.encodeWithSignature(sig, mpl, pool));
     }
     function try_setDefaultUniswapPath(address from, address to, address mid) external returns (bool ok) {
@@ -138,8 +138,8 @@ contract Governor {
         string memory sig = "setValidSubFactory(address,address,bool)";
         (ok,) = address(globals).call(abi.encodeWithSignature(sig, fac, sub, valid));
     }
-    function try_setMapleTreasury(address _treasury) external returns (bool ok) {
-        string memory sig = "setMapleTreasury(address)";
+    function try_setHeliosTreasury(address _treasury) external returns (bool ok) {
+        string memory sig = "setHeliosTreasury(address)";
         (ok,) = address(globals).call(abi.encodeWithSignature(sig, _treasury));
     }
     function try_setPoolDelegateAllowlist(address pd, bool valid) external returns (bool ok) {
@@ -207,7 +207,7 @@ contract Governor {
         (ok,) = address(globals).call(abi.encodeWithSignature(sig, period));
     }
 
-    /*** MplRewards Setters ***/
+    /*** HlsRewards Setters ***/
     function try_transferOwnership(address newOwner) external returns (bool ok) {
         string memory sig = "transferOwnership(address)";
         (ok,) = address(mplRewards).call(abi.encodeWithSignature(sig, newOwner));

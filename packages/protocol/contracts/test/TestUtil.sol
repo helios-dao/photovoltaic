@@ -13,16 +13,16 @@ import "./user/Governor.sol";
 import "./user/SecurityAdmin.sol";
 import "./user/EmergencyAdmin.sol";
 
-import "../MapleGlobals.sol";
-import "../MapleTreasury.sol";
-import "../../../token/contracts/MapleToken.sol";
+import "../HeliosGlobals.sol";
+import "../HeliosTreasury.sol";
+import "../../../token/contracts/HeliosToken.sol";
 
 import "../CollateralLockerFactory.sol";
 import "../DebtLockerFactory.sol";
 import "../FundingLockerFactory.sol";
 import "../LiquidityLockerFactory.sol";
 import "../LoanFactory.sol";
-import "../MplRewardsFactory.sol";
+import "../HlsRewardsFactory.sol";
 import "../PoolFactory.sol";
 import "../StakeLockerFactory.sol";
 
@@ -113,16 +113,16 @@ contract TestUtil is DSTest {
     LoanFactory                    loanFactory;
     PoolFactory                    poolFactory;
     StakeLockerFactory               slFactory;
-    MplRewardsFactory        mplRewardsFactory;
+    HlsRewardsFactory        mplRewardsFactory;
 
     /***********************/
-    /*** Maple Contracts ***/
+    /*** Helios Contracts ***/
     /***********************/
-    MapleGlobals       globals;
-    MapleToken             mpl;
-    MapleTreasury     treasury;
+    HeliosGlobals       globals;
+    HeliosToken             mpl;
+    HeliosTreasury     treasury;
     IBPool               bPool;
-    MplRewards      mplRewards;
+    HlsRewards      mplRewards;
     IUniswapV2Pair uniswapPair;
 
     /***************/
@@ -262,28 +262,28 @@ contract TestUtil is DSTest {
     }
 
     /**************************************/
-    /*** Maple Contract Setup Functions ***/
+    /*** Helios Contract Setup Functions ***/
     /**************************************/
-    function createMpl()      public { mpl      = new MapleToken("MapleToken", "MPL", USDC); }
+    function createHls()      public { mpl      = new HeliosToken("HeliosToken", "MPL", USDC); }
     function createGlobals()  public { globals  = gov.createGlobals(address(mpl)); }
-    function createTreasury() public { treasury = new MapleTreasury(address(mpl), USDC, UNISWAP_V2_ROUTER_02, address(globals)); }
+    function createTreasury() public { treasury = new HeliosTreasury(address(mpl), USDC, UNISWAP_V2_ROUTER_02, address(globals)); }
     function createBPool()    public { bPool    = IBPool(IBFactory(BPOOL_FACTORY).newBPool()); }
 
-    function setUpMplRewardsFactory() public {
-        mplRewardsFactory = gov.createMplRewardsFactory();
-        fakeGov.setGovMplRewardsFactory(mplRewardsFactory);
+    function setUpHlsRewardsFactory() public {
+        mplRewardsFactory = gov.createHlsRewardsFactory();
+        fakeGov.setGovHlsRewardsFactory(mplRewardsFactory);
     }
 
     function setUpGlobals() public {
         createGovernors();
         createSecurityAdmin();
         createEmergencyAdmin();
-        createMpl();
+        createHls();
         createGlobals();
         createTreasury();
         createBPool();
 
-        gov.setMapleTreasury(address(treasury));
+        gov.setHeliosTreasury(address(treasury));
         gov.setGlobalAdmin(address(emergencyAdmin));
         gov.setDefaultUniswapPath(WBTC, USDC, WETH);
         gov.setGovTreasury(treasury);
@@ -508,9 +508,9 @@ contract TestUtil is DSTest {
     /*************************************/
     /*** Yield Farming Setup Functions ***/
     /*************************************/
-    function setUpMplRewards() public {
-        mplRewards = gov.createMplRewards(address(mpl), address(pool));
-        fakeGov.setGovMplRewards(mplRewards);                            // Used to assert failures
+    function setUpHlsRewards() public {
+        mplRewards = gov.createHlsRewards(address(mpl), address(pool));
+        fakeGov.setGovHlsRewards(mplRewards);                            // Used to assert failures
     }
 
     function createFarmers() public {
@@ -653,11 +653,11 @@ contract TestUtil is DSTest {
     /*****************************/
     /*** Yield Farming Helpers ***/
     /*****************************/
-    function setUpFarming(uint256 totalMpl, uint256 rewardsDuration) internal {
-        mpl.transfer(address(gov), totalMpl);              // Transfer MPL to Governor
-        gov.transfer(mpl, address(mplRewards), totalMpl);  // Transfer MPL to MplRewards
+    function setUpFarming(uint256 totalHls, uint256 rewardsDuration) internal {
+        mpl.transfer(address(gov), totalHls);              // Transfer MPL to Governor
+        gov.transfer(mpl, address(mplRewards), totalHls);  // Transfer MPL to HlsRewards
         gov.setRewardsDuration(rewardsDuration);
-        gov.notifyRewardAmount(totalMpl);
+        gov.notifyRewardAmount(totalHls);
     }
 
     function stakeIntoFarm(Farmer farmer, uint256 amt) internal{
@@ -665,8 +665,8 @@ contract TestUtil is DSTest {
         farmer.stake(amt);
     }
 
-    function setUpFarmingAndDeposit(uint256 totalMpl, uint256 rewardsDuration, uint256 amt1, uint256 amt2, uint256 amt3) internal {
-        setUpFarming(totalMpl, rewardsDuration);
+    function setUpFarmingAndDeposit(uint256 totalHls, uint256 rewardsDuration, uint256 amt1, uint256 amt2, uint256 amt3) internal {
+        setUpFarming(totalHls, rewardsDuration);
 
         stakeIntoFarm(fay, amt1);
         stakeIntoFarm(fez, amt2);
@@ -751,7 +751,7 @@ contract TestUtil is DSTest {
         hevm.warp(currentTime + globals.lpCooldownPeriod());
     }
 
-    function setUpUniswapMplUsdcPool(uint256 mplDesiredAmt, uint256 usdcDesiredAmt) internal {
+    function setUpUniswapHlsUsdcPool(uint256 mplDesiredAmt, uint256 usdcDesiredAmt) internal {
         // Mint USDC into this account
         mint("USDC", address(this), usdcDesiredAmt);
 

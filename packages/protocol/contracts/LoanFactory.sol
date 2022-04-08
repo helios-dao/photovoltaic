@@ -17,7 +17,7 @@ contract LoanFactory is Pausable {
     uint8 public constant LATEFEE_CALC_TYPE  = 11;  // Calc type of `LateFeeCalc`.
     uint8 public constant PREMIUM_CALC_TYPE  = 12;  // Calc type of `PremiumCalc`.
 
-    IMapleGlobals public globals;  // Instance of the MapleGlobals.
+    IHeliosGlobals public globals;  // Instance of the HeliosGlobals.
 
     uint256 public loansCreated;   // Incrementor for number of Loans created.
 
@@ -42,16 +42,16 @@ contract LoanFactory is Pausable {
     );
 
     constructor(address _globals) public {
-        globals = IMapleGlobals(_globals);
+        globals = IHeliosGlobals(_globals);
     }
 
     /**
-        @dev   Sets MapleGlobals. Only the Governor can call this function.
-        @param newGlobals Address of new MapleGlobals.
+        @dev   Sets HeliosGlobals. Only the Governor can call this function.
+        @param newGlobals Address of new HeliosGlobals.
     */
     function setGlobals(address newGlobals) external {
         _isValidGovernor();
-        globals = IMapleGlobals(newGlobals);
+        globals = IHeliosGlobals(newGlobals);
     }
 
     /**
@@ -82,7 +82,7 @@ contract LoanFactory is Pausable {
         address[3] memory calcs
     ) external whenNotPaused returns (address loanAddress) {
         _whenProtocolNotPaused();
-        IMapleGlobals _globals = globals;
+        IHeliosGlobals _globals = globals;
 
         // Perform validity checks.
         require(_globals.isValidSubFactory(address(this), flFactory, FL_FACTORY), "LF:INVALID_FLF");

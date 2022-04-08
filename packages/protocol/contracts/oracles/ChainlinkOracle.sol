@@ -2,14 +2,14 @@
 pragma solidity 0.6.11;
 
 import "./IChainlinkAggregatorV3.sol";
-import "../interfaces/IMapleGlobals.sol";
+import "../interfaces/IHeliosGlobals.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @title ChainlinkOracle is a wrapper contract for Chainlink oracle price feeds that allows for manual price feed overrides.
 contract ChainlinkOracle is Ownable {
 
     IChainlinkAggregatorV3 public priceFeed;
-    IMapleGlobals public globals;
+    IHeliosGlobals public globals;
 
     address public immutable assetAddress;
 

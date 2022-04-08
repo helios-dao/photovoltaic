@@ -46,7 +46,7 @@ contract PoolLiquidationTest is TestUtil {
         uint256 gracePeriod = globals.defaultGracePeriod();
         hevm.warp(start + nextPaymentDue + gracePeriod + 1);
 
-        // Attempt to trigger default as PD holding less than minimum LoanFDTs required (MapleGlobals.minLoanEquity)
+        // Attempt to trigger default as PD holding less than minimum LoanFDTs required (HeliosGlobals.minLoanEquity)
         assertTrue(!pam.try_triggerDefault(address(pool2), address(loan), address(dlFactory)));
 
         // Update storage to have exactly 20% equity (totalSupply remains the same)
@@ -362,4 +362,4 @@ contract PoolLiquidationTest is TestUtil {
 
         assertEq(liquidityLockerBal.pre - liquidityLockerBal.post, withdrawAmt);  // All Bob's USDC was transferred out of LL
     }
-} 
+}

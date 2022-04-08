@@ -3,7 +3,7 @@ pragma solidity 0.6.11;
 
 import { IERC2222 } from "./IERC2222.sol";
 
-interface IMapleToken is IERC2222 {
+interface IHeliosToken is IERC2222 {
 
     function DOMAIN_SEPARATOR() external pure returns (bytes32);
 
