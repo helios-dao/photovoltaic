@@ -51,3 +51,7 @@ key:
   x deploy to testnet
   * figure out which functions are used by the dapp (check transactions for each live Helios contract for clues)
   * write some integration tests?
+
+4/8/22 TODO:
+- run and pass existing tests
+- choose a chain (Avalanche or Polygon) and deploy on its testnet
