@@ -31,6 +31,14 @@ module.exports = {
   networks: {
     rinkeby: {
       accounts: [process.env.DEPLOYER_PRIVATE_KEY],
+      verify: {
+        etherscan: {
+          apiUrl: "https://api-rinkeby.etherscan.io",
+          license: "AGPL-3.0",
+          forceLicense: true,
+          sleep: true
+        }
+      },
       url: "https://eth-rinkeby.alchemyapi.io/v2/KE1qQBCNVse9h7NAa_re7cfQWtaZy1ix"
     },
     hardhat: {
