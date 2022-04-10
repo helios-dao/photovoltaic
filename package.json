@@ -13,6 +13,17 @@
     "ethers": "^5.6.1",
     "hardhat": "^2.9.1",
     "hardhat-contract-sizer": "^2.5.1",
-    "hardhat-deploy": "^0.11.0"
+    "hardhat-deploy": "^0.11.0",
+    "hardhat-ethernal": "^0.5.0"
+  },
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "serve": "npx hardhat node",
+    "deploy": "npx hardhat run scripts/deploy.js --network localhost",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "ftest": "react-scripts test",
+    "eject": "react-scripts eject"
   }
 }
