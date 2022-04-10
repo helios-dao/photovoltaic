@@ -4,7 +4,7 @@ pragma solidity 0.6.11;
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
-import "./interfaces/IMapleGlobals.sol";
+import "./interfaces/IHeliosGlobals.sol";
 import "./interfaces/IPool.sol";
 import "./interfaces/IPoolFactory.sol";
 
@@ -50,7 +50,7 @@ contract StakeLocker is StakeLockerFDT, Pausable {
         address _stakeAsset,
         address _liquidityAsset,
         address _pool
-    ) StakeLockerFDT("Maple StakeLocker", "MPLSTAKE", _liquidityAsset) public {
+    ) StakeLockerFDT("Helios StakeLocker", "MPLSTAKE", _liquidityAsset) public {
         liquidityAsset = _liquidityAsset;
         stakeAsset     = IERC20(_stakeAsset);
         pool           = _pool;
@@ -349,7 +349,7 @@ contract StakeLocker is StakeLockerFDT, Pausable {
         @dev Returns if the unstake cooldown period has passed for `msg.sender` and if they are in the unstake window.
     */
     function isUnstakeAllowed(address from) public view returns (bool) {
-        IMapleGlobals globals = _globals();
+        IHeliosGlobals globals = _globals();
         return (block.timestamp - (unstakeCooldown[from] + globals.stakerCooldownPeriod())) <= globals.stakerUnstakeWindow();
     }
 
@@ -358,7 +358,7 @@ contract StakeLocker is StakeLockerFDT, Pausable {
              This is only possible if they have zero cooldown or they are past their unstake window.
     */
     function isReceiveAllowed(uint256 _unstakeCooldown) public view returns (bool) {
-        IMapleGlobals globals = _globals();
+        IHeliosGlobals globals = _globals();
         return block.timestamp > (_unstakeCooldown + globals.stakerCooldownPeriod() + globals.stakerUnstakeWindow());
     }
 
@@ -387,10 +387,10 @@ contract StakeLocker is StakeLockerFDT, Pausable {
     }
 
     /**
-        @dev Returns the MapleGlobals instance.
+        @dev Returns the HeliosGlobals instance.
     */
-    function _globals() internal view returns (IMapleGlobals) {
-        return IMapleGlobals(IPoolFactory(IPool(pool).superFactory()).globals());
+    function _globals() internal view returns (IHeliosGlobals) {
+        return IHeliosGlobals(IPoolFactory(IPool(pool).superFactory()).globals());
     }
 
     /**

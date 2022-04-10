@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.6.11;
 
-import { MapleTest, Hevm } from "../../modules/maple-test/contracts/test.sol";
+import { HeliosTest, Hevm } from "../../modules/maple-test/contracts/test.sol";
 
-import { MapleToken } from "../MapleToken.sol";
+import { HeliosToken } from "../HeliosToken.sol";
 
-import { MapleTokenUser } from "./accounts/MapleTokenUser.sol";
+import { HeliosTokenUser } from "./accounts/HeliosTokenUser.sol";
 
-contract MapleTokenTest is MapleTest {
+contract HeliosTokenTest is HeliosTest {
 
-    MapleToken     token;
-    MapleTokenUser usr;
+    HeliosToken     token;
+    HeliosTokenUser usr;
 
     uint256 skOwner   = 1;
     uint256 skSpender = 2;
@@ -22,8 +22,8 @@ contract MapleTokenTest is MapleTest {
 
     function setUp() external {
         hevm.warp(deadline - 52 weeks);
-        token = new MapleToken("Maple Token", "MPL", address(0x1111111111111111111111111111111111111111));
-        usr   = new MapleTokenUser();
+        token = new HeliosToken("Helios Token", "MPL", address(0x1111111111111111111111111111111111111111));
+        usr   = new HeliosTokenUser();
     }
 
     function test_initialBalance() external {

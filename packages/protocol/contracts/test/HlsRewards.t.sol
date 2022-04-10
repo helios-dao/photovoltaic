@@ -3,7 +3,7 @@ pragma solidity 0.6.11;
 
 import "./TestUtil.sol";
 
-contract MplRewardsTest is TestUtil {
+contract HlsRewardsTest is TestUtil {
 
     function setUp() public {
         setUpGlobals();
@@ -13,8 +13,8 @@ contract MplRewardsTest is TestUtil {
         setUpActors();
         setUpBalancerPool();
         setUpLiquidityPool();
-        setUpMplRewardsFactory();
-        setUpMplRewards();
+        setUpHlsRewardsFactory();
+        setUpHlsRewards();
         setUpFarmers(1000 * USD, 1000 * USD, 1000 * USD);
     }
 
@@ -163,7 +163,7 @@ contract MplRewardsTest is TestUtil {
 
         assertEq(pool.balanceOf(address(fay)),           1000 * WAD);
         assertEq(pool.depositDate(address(fay)),              start);
-        assertEq(pool.depositDate(address(mplRewards)),           0);  // MplRewards depDate should always be zero so that it can avoid lockup logic
+        assertEq(pool.depositDate(address(mplRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
         assertEq(mplRewards.balanceOf(address(fay)),              0);
         assertEq(mplRewards.totalSupply(),                        0);
 
@@ -193,7 +193,7 @@ contract MplRewardsTest is TestUtil {
 
         assertEq(pool.balanceOf(address(fay)),           1000 * WAD);  // PoolFDT balance doesn't change
         assertEq(pool.depositDate(address(fay)),              start);
-        assertEq(pool.depositDate(address(mplRewards)),           0);  // MplRewards depDate should always be zero so that it can avoid lockup logic
+        assertEq(pool.depositDate(address(mplRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
         assertEq(mplRewards.balanceOf(address(fay)),      100 * WAD);
         assertEq(mplRewards.totalSupply(),                100 * WAD);
 
@@ -202,7 +202,7 @@ contract MplRewardsTest is TestUtil {
 
         assertEq(pool.balanceOf(address(fay)),           1000 * WAD);
         assertEq(pool.depositDate(address(fay)),              start);  // Does not change
-        assertEq(pool.depositDate(address(mplRewards)),           0);  // MplRewards depDate should always be zero so that it can avoid lockup logic
+        assertEq(pool.depositDate(address(mplRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
         assertEq(mplRewards.balanceOf(address(fay)),              0);
         assertEq(mplRewards.totalSupply(),                        0);
     }

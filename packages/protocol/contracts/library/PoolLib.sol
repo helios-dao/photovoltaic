@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "../interfaces/ILoan.sol";
 import "../interfaces/IBPool.sol";
-import "../interfaces/IMapleGlobals.sol";
+import "../interfaces/IHeliosGlobals.sol";
 import "../interfaces/ILiquidityLocker.sol";
 import "../interfaces/IERC20Details.sol";
 import "../interfaces/ILoanFactory.sol";
@@ -31,14 +31,14 @@ library PoolLib {
 
     /**
         @dev   Conducts sanity checks for Pools in the constructor.
-        @param globals        Instance of a MapleGlobals.
+        @param globals        Instance of a HeliosGlobals.
         @param liquidityAsset Asset used by Pool for liquidity to fund loans.
         @param stakeAsset     Asset escrowed in StakeLocker.
         @param stakingFee     Fee that the Stakers earn on interest, in basis points.
         @param delegateFee    Fee that the Pool Delegate earns on interest, in basis points.
     */
     function poolSanityChecks(
-        IMapleGlobals globals,
+        IHeliosGlobals globals,
         address liquidityAsset,
         address stakeAsset,
         uint256 stakingFee,
@@ -75,7 +75,7 @@ library PoolLib {
         address dlFactory,
         uint256 amt
     ) external {
-        IMapleGlobals globals = IMapleGlobals(ILoanFactory(superFactory).globals());
+        IHeliosGlobals globals = IHeliosGlobals(ILoanFactory(superFactory).globals());
         address loanFactory   = ILoan(loan).superFactory();
 
         // Auth checks.
@@ -187,11 +187,11 @@ library PoolLib {
 
     /**
         @dev   Checks that the deactivation is allowed.
-        @param globals        Instance of a MapleGlobals.
+        @param globals        Instance of a HeliosGlobals.
         @param principalOut   Amount of funds that are already funded to Loans.
         @param liquidityAsset Liquidity Asset of the Pool.
     */
-    function validateDeactivation(IMapleGlobals globals, uint256 principalOut, address liquidityAsset) external view {
+    function validateDeactivation(IHeliosGlobals globals, uint256 principalOut, address liquidityAsset) external view {
         require(principalOut <= _convertFromUsd(globals, liquidityAsset, 100), "P:PRINCIPAL_OUTSTANDING");
     }
 
@@ -245,9 +245,9 @@ library PoolLib {
         @dev   Transfers any locked funds to the Governor. Only the Governor can call this function.
         @param token          Address of the token to be reclaimed.
         @param liquidityAsset Address of Liquidity Asset that is supported by the Pool.
-        @param globals        Instance of a MapleGlobals.
+        @param globals        Instance of a HeliosGlobals.
     */
-    function reclaimERC20(address token, address liquidityAsset, IMapleGlobals globals) external {
+    function reclaimERC20(address token, address liquidityAsset, IHeliosGlobals globals) external {
         require(msg.sender == globals.governor(), "P:NOT_GOV");
         require(token != liquidityAsset && token != address(0), "P:INVALID_TOKEN");
         IERC20(token).safeTransfer(msg.sender, IERC20(token).balanceOf(address(this)));
@@ -403,7 +403,7 @@ library PoolLib {
 
     /**
         @dev    Returns information on the stake requirements.
-        @param  globals                    Instance of a MapleGlobals.
+        @param  globals                    Instance of a HeliosGlobals.
         @param  balancerPool               Address of Balancer pool.
         @param  liquidityAsset             Address of Liquidity Asset, to be returned from swap out.
         @param  poolDelegate               Address of Pool Delegate.
@@ -414,7 +414,7 @@ library PoolLib {
         @return poolAmountInRequired       BPTs required for minimum Liquidity Asset coverage.
         @return poolAmountPresent          Current staked BPTs.
     */
-    function getInitialStakeRequirements(IMapleGlobals globals, address balancerPool, address liquidityAsset, address poolDelegate, address stakeLocker) external view returns (
+    function getInitialStakeRequirements(IHeliosGlobals globals, address balancerPool, address liquidityAsset, address poolDelegate, address stakeLocker) external view returns (
         uint256 swapOutAmountRequired,
         uint256 currentPoolDelegateCover,
         bool    enoughStakeForFinalization,
@@ -446,12 +446,12 @@ library PoolLib {
 
     /**
         @dev    Returns Liquidity Asset in Liquidity Asset units when given integer USD (E.g., $100 = 100).
-        @param  globals        Instance of a MapleGlobals.
+        @param  globals        Instance of a HeliosGlobals.
         @param  liquidityAsset Liquidity Asset of the pool.
         @param  usdAmount      USD amount to convert, in integer units (e.g., $100 = 100).
         @return usdAmount worth of Liquidity Asset, in Liquidity Asset units.
     */
-    function _convertFromUsd(IMapleGlobals globals, address liquidityAsset, uint256 usdAmount) internal view returns (uint256) {
+    function _convertFromUsd(IHeliosGlobals globals, address liquidityAsset, uint256 usdAmount) internal view returns (uint256) {
         return usdAmount
             .mul(10 ** 8)                                         // Cancel out 10 ** 8 decimals from oracle.
             .mul(10 ** IERC20Details(liquidityAsset).decimals())  // Convert to Liquidity Asset precision.

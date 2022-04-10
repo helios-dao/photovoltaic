@@ -17,16 +17,16 @@ key:
 
 -+ Governor, GlobalAdmin, SecurityAdmin: those look like (old) gnosis proxies. Can we use new gnosis proxies? probably yes
 - USDC, WBTC, WETH9: the external tokens of the same name
--* MapleToken: the underlying token, would need to be renamed
+-* HeliosToken: the underlying token, would need to be renamed
 - UniswapV2Router02: the uniswap router contract, used to "Liquidates a Borrower's collateral, when a default is triggered."
 - BFactory: the Balancer pool factory. Don't think it's used outside of tests?
 - ChainLinkAggregatorWBTC: lib?
 -+ BPool: the MPL/USDC pool, used for staking MPL tokens
--* MapleGlobals: contract that holds a bunch of config variables for the entire protocol
+-* HeliosGlobals: contract that holds a bunch of config variables for the entire protocol
 - Util: util lib that's imported in a bunch of contracts... does it really need to be deployed?
 - PoolLib: pool lib; necessary?
 - LoanLib: loan lib; necessary?
--* MapleTreasury: the treasury, holds all the money
+-* HeliosTreasury: the treasury, holds all the money
 -* RepaymentCalc:
 -* LateFeeCalc:
 -* PremiumCalc:
@@ -37,7 +37,7 @@ key:
 -* LoanFactory:
 -* CollateralLockerFactory:
 -* FundingLockerFactory:
--* MplRewardsFactory:
+-* HlsRewardsFactory:
 -* PriceOracleUSDC: oracle (named UsdOracle)
 -* PriceOracleWBTC: oracle (named ChainlinkOracle)
 -+ one more gnosis proxy to be the owner of the PriceOracleWBTC
@@ -45,9 +45,13 @@ key:
 4/1/22:
 - protocol successfully deployed locally (apparently)
 - next steps:
-  * add token to deploy scripts
-  * update deploy scripts to include actual dependency addresses
-  * replace mentions of Maple with Helios in contracts
-  * deploy to testnet
-  * figure out which functions are used by the dapp (check transactions for each live Maple contract for clues)
+  x add token to deploy scripts
+  x update deploy scripts to include actual dependency addresses
+  x replace mentions of Helios with Helios in contracts
+  x deploy to testnet
+  * figure out which functions are used by the dapp (check transactions for each live Helios contract for clues)
   * write some integration tests?
+
+4/8/22 TODO:
+- run and pass existing tests
+- choose a chain (Avalanche or Polygon) and deploy on its testnet

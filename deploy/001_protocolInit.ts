@@ -1,12 +1,14 @@
-// import { network } from "hardhat";
-
 module.exports = async ({
   getNamedAccounts,
-  deployments,
-  network
+  deployments
 }) => {
   const { deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
+  const {
+    deployer,
+    globalAdmin,
+    governor,
+    oracleOwner,
+  } = await getNamedAccounts();
 
   let deployedContracts = {};
 
@@ -14,7 +16,6 @@ module.exports = async ({
     console.log(`Deploying ${name}...`, 'args: ', args, 'libraries: ', libraries);
     const contract = await deploy(name, {
       from: deployer,
-      // gasLimit: 4000000,
       args,
       libraries,
     });
@@ -22,21 +23,23 @@ module.exports = async ({
     console.log(`Deployed ${name} at ${contract.address}`);
   };
 
-  const governor = deployer;  // proxy contract
-  const mplToken = deployer;  // helios token contract
-  const globalAdmin = deployer;  // proxy contract
-  const aggregator = deployer;  // chainlink USD-WBTC contract
-  const assetAddress = deployer;  // WBTC token contract
-  const owner = deployer;  // proxy contract
-  const fundsToken = deployer;  // USD token contract
-  const uniswapRouter = deployer;  // uniswap router contract
-  const lateFee = 0;
-  const premiumFee = 0;
+  const CHAINLINK_USD_WBTC_AGGREGATOR = process.env.CHAINLINK_USD_WBTC_AGGREGATOR;  // chainlink USD-WBTC contract
+  const LATE_FEE = 0;
+  const PREMIUM_FEE = 0;
+  const TOKEN_NAME = 'Helios Token';  // token name
+  const TOKEN_SYMBOL = 'HLS';  // token symbol
+  const UNISWAP_ROUTER = process.env.UNISWAP_ROUTER;  // uniswap router contract
+  const USD_TOKEN = process.env.USD_TOKEN;  // USD token contract
+  const WBTC_TOKEN = process.env.WBTC_TOKEN;  // WBTC token contract
 
   const CONTRACTS = [
     {
-      name: 'MapleGlobals',
-      args: [governor, mplToken, globalAdmin]
+      name: 'HeliosToken',
+      args: [TOKEN_NAME, TOKEN_SYMBOL, USD_TOKEN]
+    },
+    {
+      name: 'HeliosGlobals',
+      args: [governor, 'HeliosToken', globalAdmin]
     },
     {
       name: 'PoolLib'
@@ -50,7 +53,7 @@ module.exports = async ({
     },
     {
       name: 'PoolFactory',
-      args: ['MapleGlobals'],
+      args: ['HeliosGlobals'],
       libs: ['PoolLib']
     },
     {
@@ -70,23 +73,23 @@ module.exports = async ({
     },
     {
       name: 'LoanFactory',
-      args: ['MapleGlobals'],
+      args: ['HeliosGlobals'],
       libs: ['LoanLib', 'Util']
     },
     {
-      name: 'MplRewardsFactory',
-      args: ['MapleGlobals'],
+      name: 'HlsRewardsFactory',
+      args: ['HeliosGlobals'],
     },
     {
       name: 'UsdOracle'
     },
     {
       name: 'ChainlinkOracle',
-      args: [aggregator, assetAddress, owner]
+      args: [CHAINLINK_USD_WBTC_AGGREGATOR, WBTC_TOKEN, oracleOwner]
     },
     {
-      name: 'MapleTreasury',
-      args: [mplToken, fundsToken, uniswapRouter, 'MapleGlobals'],
+      name: 'HeliosTreasury',
+      args: ['HeliosToken', USD_TOKEN, UNISWAP_ROUTER, 'HeliosGlobals'],
       libs: ['Util']
     },
     {
@@ -94,11 +97,11 @@ module.exports = async ({
     },
     {
       name: 'LateFeeCalc',
-      args: [lateFee]
+      args: [LATE_FEE]
     },
     {
       name: 'PremiumCalc',
-      args: [premiumFee]
+      args: [PREMIUM_FEE]
     },
   ];
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.6.11;
 
-interface IMplRewards {
+interface IHlsRewards {
 
     // Views
     function rewardsToken() external view returns (address);
@@ -21,7 +21,7 @@ interface IMplRewards {
     function lastPauseTime() external view returns (uint256);
 
     function paused() external view returns (bool);
-    
+
     function userRewardPerTokenPaid(address) external view returns (uint256);
 
     function rewards(address) external view returns (uint256);

@@ -12,7 +12,7 @@ contract PoolFactory is Pausable {
     uint8 public constant SL_FACTORY = 4;  // Factory type of `StakeLockerFactory`.
 
     uint256  public poolsCreated;  // Incrementor for number of Pools created.
-    IMapleGlobals public globals;  // A MapleGlobals instance.
+    IHeliosGlobals public globals;  // A HeliosGlobals instance.
 
     mapping(uint256 => address) public pools;              // Map to reference Pools corresponding to their respective indices.
     mapping(address => bool)    public isPool;             // True only if a Pool was instantiated by this factory.
@@ -35,16 +35,16 @@ contract PoolFactory is Pausable {
     );
 
     constructor(address _globals) public {
-        globals = IMapleGlobals(_globals);
+        globals = IHeliosGlobals(_globals);
     }
 
     /**
-        @dev   Sets MapleGlobals instance. Only the Governor can call this function.
-        @param newGlobals Address of new MapleGlobals.
+        @dev   Sets HeliosGlobals instance. Only the Governor can call this function.
+        @param newGlobals Address of new HeliosGlobals.
     */
     function setGlobals(address newGlobals) external {
         _isValidGovernor();
-        globals = IMapleGlobals(newGlobals);
+        globals = IHeliosGlobals(newGlobals);
     }
 
     /**
@@ -70,13 +70,13 @@ contract PoolFactory is Pausable {
     ) external whenNotPaused returns (address poolAddress) {
         _whenProtocolNotPaused();
         {
-            IMapleGlobals _globals = globals;
+            IHeliosGlobals _globals = globals;
             require(_globals.isValidSubFactory(address(this), llFactory, LL_FACTORY), "PF:INVALID_LLF");
             require(_globals.isValidSubFactory(address(this), slFactory, SL_FACTORY), "PF:INVALID_SLF");
             require(_globals.isValidPoolDelegate(msg.sender),                         "PF:NOT_DELEGATE");
         }
 
-        string memory name   = "Maple Pool Token";
+        string memory name   = "Helios Pool Token";
         string memory symbol = "MPL-LP";
 
         Pool pool =

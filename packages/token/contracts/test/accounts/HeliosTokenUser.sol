@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.6.11;
 
-// TODO: odd bug not allowing IERC2222 selectors via IMapleToken
-import { IMapleToken } from "../../interfaces/IMapleToken.sol";
+// TODO: odd bug not allowing IERC2222 selectors via IHeliosToken
+import { IHeliosToken } from "../../interfaces/IHeliosToken.sol";
 import { IERC2222 }    from "../../interfaces/IERC2222.sol";
 
 import { ERC20User } from "./ERC20User.sol";
 
-contract MapleTokenUser is ERC20User {
+contract HeliosTokenUser is ERC20User {
 
     /************************/
     /*** Direct Functions ***/
     /************************/
 
     function fdt_withdrawFunds(address fdt) external {
-        IMapleToken(fdt).withdrawFunds();
+        IHeliosToken(fdt).withdrawFunds();
     }
 
     function fdt_withdrawFundsOnBehalf(address fdt, address user) external {
-        IMapleToken(fdt).withdrawFundsOnBehalf(user);
+        IHeliosToken(fdt).withdrawFundsOnBehalf(user);
     }
 
     function fdt_updateFundsReceived(address fdt) external {
-        IMapleToken(fdt).updateFundsReceived();
+        IHeliosToken(fdt).updateFundsReceived();
     }
 
     function mplToken_permit(
@@ -37,7 +37,7 @@ contract MapleTokenUser is ERC20User {
     )
         external
     {
-        IMapleToken(mplToken).permit(owner, spender, amount, deadline, v, r, s);
+        IHeliosToken(mplToken).permit(owner, spender, amount, deadline, v, r, s);
     }
 
     /*********************/
@@ -68,7 +68,7 @@ contract MapleTokenUser is ERC20User {
     )
         external returns (bool ok)
     {
-        (ok,) = mplToken.call(abi.encodeWithSelector(IMapleToken.permit.selector, owner, spender, amount, deadline, v, r, s));
+        (ok,) = mplToken.call(abi.encodeWithSelector(IHeliosToken.permit.selector, owner, spender, amount, deadline, v, r, s));
     }
 
 }

@@ -3,16 +3,16 @@ pragma solidity 0.6.11;
 
 import "./LP.sol";
 
-import "../../MplRewards.sol";
+import "../../HlsRewards.sol";
 
 import "../../interfaces/IPool.sol";
 
 contract Farmer is LP {
 
-    MplRewards public mplRewards;
+    HlsRewards public mplRewards;
     IERC20     public poolFDT;
 
-    constructor(MplRewards _mplRewards, IERC20 _poolFDT) public {
+    constructor(HlsRewards _mplRewards, IERC20 _poolFDT) public {
         mplRewards = _mplRewards;
         poolFDT    = _poolFDT;
     }

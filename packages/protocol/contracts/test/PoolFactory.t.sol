@@ -16,13 +16,13 @@ contract PoolFactoryTest is TestUtil {
     }
 
     function test_setGlobals() public {
-        MapleGlobals globals2 = fakeGov.createGlobals(address(mpl));                   // Create upgraded MapleGlobals
+        HeliosGlobals globals2 = fakeGov.createGlobals(address(mpl));                   // Create upgraded HeliosGlobals
 
         assertEq(address(poolFactory.globals()), address(globals));
 
         assertTrue(!fakeGov.try_setGlobals(address(poolFactory), address(globals2)));  // Non-governor cannot set new globals
 
-        globals2 = gov.createGlobals(address(mpl));                                    // Create upgraded MapleGlobals
+        globals2 = gov.createGlobals(address(mpl));                                    // Create upgraded HeliosGlobals
 
         assertTrue(gov.try_setGlobals(address(poolFactory), address(globals2)));       // Governor can set new globals
         assertEq(address(poolFactory.globals()), address(globals2));                   // Globals is updated

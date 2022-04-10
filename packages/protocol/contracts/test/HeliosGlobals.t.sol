@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 
 import "./TestUtil.sol";
 
-contract MapleGlobalsTest is TestUtil {
+contract HeliosGlobalsTest is TestUtil {
 
     function setUp() public {
         setUpGlobals();
@@ -17,7 +17,7 @@ contract MapleGlobalsTest is TestUtil {
 
     function test_constructor() public {
 
-        globals = new MapleGlobals(address(gov), address(mpl), address(1));
+        globals = new HeliosGlobals(address(gov), address(mpl), address(1));
 
         assertEq(globals.governor(),         address(gov));
         assertEq(globals.mpl(),              address(mpl));
@@ -210,11 +210,11 @@ contract MapleGlobalsTest is TestUtil {
         assertTrue(     gov.try_setSwapOutRequired(10_000));  // Lower bound is $10,000 of pool cover
         assertEq(   globals.swapOutRequired(),     10_000);
 
-        // setMapleTreasury()
+        // setHeliosTreasury()
         assertEq(   globals.mapleTreasury(), address(treasury));
-        assertTrue(!fakeGov.try_setMapleTreasury(address(this)));
-        assertTrue(    !gov.try_setMapleTreasury(address(0)));
-        assertTrue(     gov.try_setMapleTreasury(address(this)));
+        assertTrue(!fakeGov.try_setHeliosTreasury(address(this)));
+        assertTrue(    !gov.try_setHeliosTreasury(address(0)));
+        assertTrue(     gov.try_setHeliosTreasury(address(this)));
         assertEq(   globals.mapleTreasury(), address(this));
 
         // setPriceOracle()

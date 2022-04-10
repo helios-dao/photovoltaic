@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "./interfaces/IERC2258.sol";
 
 // https://docs.synthetix.io/contracts/source/contracts/stakingrewards
-/// @title MplRewards Synthetix farming contract fork for liquidity mining.
-contract MplRewards is Ownable {
+/// @title HlsRewards Synthetix farming contract fork for liquidity mining.
+contract HlsRewards is Ownable {
 
     using SafeMath  for uint256;
     using SafeERC20 for IERC20;

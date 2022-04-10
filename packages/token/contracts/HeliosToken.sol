@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.6.11;
 
-import { IMapleToken } from "./interfaces/IMapleToken.sol";
+import { IHeliosToken } from "./interfaces/IHeliosToken.sol";
 
 import { ERC2222 } from "./ERC2222.sol";
 
-contract MapleToken is IMapleToken, ERC2222 {
+contract HeliosToken is IHeliosToken, ERC2222 {
 
     bytes32 public immutable override DOMAIN_SEPARATOR;
 
@@ -15,10 +15,10 @@ contract MapleToken is IMapleToken, ERC2222 {
     mapping (address => uint256) public override nonces;
 
     /**
-        @dev Instantiates the MapleToken.
+        @dev Instantiates the HeliosToken.
         @param name       Name of the token.
         @param symbol     Symbol of the token.
-        @param fundsToken The asset claimable / distributed via ERC-2222, deposited to MapleToken contract.
+        @param fundsToken The asset claimable / distributed via ERC-2222, deposited to HeliosToken contract.
      */
     constructor (
         string memory name,
@@ -39,7 +39,7 @@ contract MapleToken is IMapleToken, ERC2222 {
             )
         );
 
-        require(address(fundsToken) != address(0), "MapleToken:INVALID_FUNDS_TOKEN");
+        require(address(fundsToken) != address(0), "HeliosToken:INVALID_FUNDS_TOKEN");
         _mint(msg.sender, 10_000_000 * 10 ** 18);
     }
 
@@ -54,7 +54,7 @@ contract MapleToken is IMapleToken, ERC2222 {
         @param s        ECDSA signature s component
      */
     function permit(address owner, address spender, uint256 amount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external override {
-        require(deadline >= block.timestamp, 'MapleToken:EXPIRED');
+        require(deadline >= block.timestamp, 'HeliosToken:EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
@@ -63,7 +63,7 @@ contract MapleToken is IMapleToken, ERC2222 {
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress == owner, 'MapleToken:INVALID_SIGNATURE');
+        require(recoveredAddress == owner, 'HeliosToken:INVALID_SIGNATURE');
         _approve(owner, spender, amount);
     }
 

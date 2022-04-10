@@ -13,3 +13,5 @@ hevm*
 node_modules
 /artifacts
 /deployments
+
+.env*

@@ -9,7 +9,7 @@ import "./interfaces/ICollateralLockerFactory.sol";
 import "./interfaces/IERC20Details.sol";
 import "./interfaces/IFundingLocker.sol";
 import "./interfaces/IFundingLockerFactory.sol";
-import "./interfaces/IMapleGlobals.sol";
+import "./interfaces/IHeliosGlobals.sol";
 import "./interfaces/ILateFeeCalc.sol";
 import "./interfaces/ILiquidityLocker.sol";
 import "./interfaces/ILoanFactory.sol";
@@ -134,8 +134,8 @@ contract Loan is LoanFDT, Pausable {
         address _clFactory,
         uint256[5] memory specs,
         address[3] memory calcs
-    ) LoanFDT("Maple Loan Token", "MPL-LOAN", _liquidityAsset) public {
-        IMapleGlobals globals = _globals(msg.sender);
+    ) LoanFDT("Helios Loan Token", "MPL-LOAN", _liquidityAsset) public {
+        IHeliosGlobals globals = _globals(msg.sender);
 
         // Perform validity cross-checks.
         LoanLib.loanSanityChecks(globals, _liquidityAsset, _collateralAsset, specs);
@@ -182,7 +182,7 @@ contract Loan is LoanFDT, Pausable {
         _whenProtocolNotPaused();
         _isValidBorrower();
         _isValidState(State.Ready);
-        IMapleGlobals globals = _globals(superFactory);
+        IHeliosGlobals globals = _globals(superFactory);
 
         IFundingLocker _fundingLocker = IFundingLocker(fundingLocker);
 
@@ -205,9 +205,9 @@ contract Loan is LoanFDT, Pausable {
         address treasury = globals.mapleTreasury();
 
         uint256 _feePaid = feePaid = amt.mul(investorFee).div(10_000);  // Update fees paid for `claim()`.
-        uint256 treasuryAmt        = amt.mul(treasuryFee).div(10_000);  // Calculate amount to send to the MapleTreasury.
+        uint256 treasuryAmt        = amt.mul(treasuryFee).div(10_000);  // Calculate amount to send to the HeliosTreasury.
 
-        _transferFunds(_fundingLocker, treasury, treasuryAmt);                         // Send the treasury fee directly to the MapleTreasury.
+        _transferFunds(_fundingLocker, treasury, treasuryAmt);                         // Send the treasury fee directly to the HeliosTreasury.
         _transferFunds(_fundingLocker, borrower, amt.sub(treasuryAmt).sub(_feePaid));  // Transfer drawdown amount to the Borrower.
 
         // Update excessReturned for `claim()`.
@@ -523,10 +523,10 @@ contract Loan is LoanFDT, Pausable {
     }
 
     /**
-        @dev Returns the MapleGlobals instance.
+        @dev Returns the HeliosGlobals instance.
     */
-    function _globals(address loanFactory) internal view returns (IMapleGlobals) {
-        return IMapleGlobals(ILoanFactory(loanFactory).globals());
+    function _globals(address loanFactory) internal view returns (IHeliosGlobals) {
+        return IHeliosGlobals(ILoanFactory(loanFactory).globals());
     }
 
     /**

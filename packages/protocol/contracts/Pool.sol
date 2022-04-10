@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 
 import "./interfaces/IBPool.sol";
 import "./interfaces/IDebtLocker.sol";
-import "./interfaces/IMapleGlobals.sol";
+import "./interfaces/IHeliosGlobals.sol";
 import "./interfaces/ILiquidityLocker.sol";
 import "./interfaces/ILiquidityLockerFactory.sol";
 import "./interfaces/ILoan.sol";
@@ -644,10 +644,10 @@ contract Pool is PoolFDT {
     }
 
     /**
-        @dev Returns the MapleGlobals instance.
+        @dev Returns the HeliosGlobals instance.
     */
-    function _globals(address poolFactory) internal view returns (IMapleGlobals) {
-        return IMapleGlobals(IPoolFactory(poolFactory).globals());
+    function _globals(address poolFactory) internal view returns (IHeliosGlobals) {
+        return IHeliosGlobals(IPoolFactory(poolFactory).globals());
     }
 
     /**

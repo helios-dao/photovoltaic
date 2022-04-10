@@ -6,7 +6,7 @@ import "../interfaces/ICollateralLockerFactory.sol";
 import "../interfaces/IERC20Details.sol";
 import "../interfaces/IFundingLocker.sol";
 import "../interfaces/IFundingLockerFactory.sol";
-import "../interfaces/IMapleGlobals.sol";
+import "../interfaces/IHeliosGlobals.sol";
 import "../interfaces/ILateFeeCalc.sol";
 import "../interfaces/ILoanFactory.sol";
 import "../interfaces/IPremiumCalc.sol";
@@ -32,12 +32,12 @@ library LoanLib {
 
     /**
         @dev    Performs sanity checks on the data passed in Loan constructor.
-        @param  globals         Instance of a MapleGlobals.
+        @param  globals         Instance of a HeliosGlobals.
         @param  liquidityAsset  Contract address of the Liquidity Asset.
         @param  collateralAsset Contract address of the Collateral Asset.
         @param  specs           Contains specifications for this Loan.
     */
-    function loanSanityChecks(IMapleGlobals globals, address liquidityAsset, address collateralAsset, uint256[5] calldata specs) external view {
+    function loanSanityChecks(IHeliosGlobals globals, address liquidityAsset, address collateralAsset, uint256[5] calldata specs) external view {
         require(globals.isValidLiquidityAsset(liquidityAsset),   "L:INVALID_LIQ_ASSET");
         require(globals.isValidCollateralAsset(collateralAsset), "L:INVALID_COL_ASSET");
 
@@ -99,7 +99,7 @@ library LoanLib {
         collateralAsset.safeApprove(UNISWAP_ROUTER, uint256(0));
         collateralAsset.safeApprove(UNISWAP_ROUTER, liquidationAmt);
 
-        IMapleGlobals globals = _globals(superFactory);
+        IHeliosGlobals globals = _globals(superFactory);
 
         // Get minimum amount of loan asset get after swapping collateral asset.
         uint256 minAmount = Util.calcMinAmount(globals, address(collateralAsset), liquidityAsset, liquidationAmt);
@@ -135,9 +135,9 @@ library LoanLib {
         @dev   Transfers any locked funds to the Governor. Only the Governor can call this function.
         @param token          Address of the token to be reclaimed.
         @param liquidityAsset Address of token that is used by the loan for drawdown and payments.
-        @param globals        Instance of a MapleGlobals.
+        @param globals        Instance of a HeliosGlobals.
     */
-    function reclaimERC20(address token, address liquidityAsset, IMapleGlobals globals) external {
+    function reclaimERC20(address token, address liquidityAsset, IHeliosGlobals globals) external {
         require(msg.sender == globals.governor(),               "L:NOT_GOV");
         require(token != liquidityAsset && token != address(0), "L:INVALID_TOKEN");
         IERC20(token).safeTransfer(msg.sender, IERC20(token).balanceOf(address(this)));
@@ -263,7 +263,7 @@ library LoanLib {
         view
         returns (uint256)
     {
-        IMapleGlobals globals = _globals(superFactory);
+        IHeliosGlobals globals = _globals(superFactory);
 
         uint256 wad = _toWad(amt, liquidityAsset);  // Convert to WAD precision.
 
@@ -282,8 +282,8 @@ library LoanLib {
     /*** Helper Functions ***/
     /************************/
 
-    function _globals(address loanFactory) internal view returns (IMapleGlobals) {
-        return IMapleGlobals(ILoanFactory(loanFactory).globals());
+    function _globals(address loanFactory) internal view returns (IHeliosGlobals) {
+        return IHeliosGlobals(ILoanFactory(loanFactory).globals());
     }
 
     function _toWad(uint256 amt, IERC20Details liquidityAsset) internal view returns (uint256) {

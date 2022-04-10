@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity 0.6.11;
 
-interface IMapleGlobals {
+interface IHeliosGlobals {
 
     function pendingGovernor() external view returns (address);
 
@@ -42,13 +42,13 @@ interface IMapleGlobals {
     function isValidSubFactory(address, address, uint8) external view returns (bool);
 
     function isValidPoolFactory(address) external view returns (bool);
-    
+
     function getLatestPrice(address) external view returns (uint256);
-    
+
     function defaultUniswapPath(address, address) external view returns (address);
 
     function minLoanEquity() external view returns (uint256);
-    
+
     function maxSwapSlippage() external view returns (uint256);
 
     function protocolPaused() external view returns (bool);
@@ -101,7 +101,7 @@ interface IMapleGlobals {
 
     function setTreasuryFee(uint256) external;
 
-    function setMapleTreasury(address) external;
+    function setHeliosTreasury(address) external;
 
     function setDefaultGracePeriod(uint256) external;
 

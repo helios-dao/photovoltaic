@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 
 import "./TestUtil.sol";
 
-contract MapleTreasuryTest is TestUtil {
+contract HeliosTreasuryTest is TestUtil {
 
     function setUp() public {
         setUpGlobals();
@@ -19,13 +19,13 @@ contract MapleTreasuryTest is TestUtil {
     }
 
     function test_setGlobals() public {
-        MapleGlobals globals2 = fakeGov.createGlobals(address(mpl));                // Create upgraded MapleGlobals
+        HeliosGlobals globals2 = fakeGov.createGlobals(address(mpl));                // Create upgraded HeliosGlobals
 
         assertEq(address(treasury.globals()), address(globals));
 
         assertTrue(!fakeGov.try_setGlobals(address(treasury), address(globals2)));  // Non-governor cannot set new globals
 
-        globals2 = gov.createGlobals(address(mpl));                                 // Create upgraded MapleGlobals
+        globals2 = gov.createGlobals(address(mpl));                                 // Create upgraded HeliosGlobals
 
         assertTrue(gov.try_setGlobals(address(treasury), address(globals2)));       // Governor can set new globals
         assertEq(address(treasury.globals()), address(globals2));                   // Globals is updated
@@ -43,7 +43,7 @@ contract MapleTreasuryTest is TestUtil {
         assertTrue(     gov.try_reclaimERC20_treasury(USDC, 40 * USD));
 
         assertEq(IERC20(USDC).balanceOf(address(treasury)), 60 * USD);  // Can be distributed to MPL holders
-        assertEq(IERC20(USDC).balanceOf(address(gov)), 40 * USD);  // Withdrawn to MapleDAO address for funding
+        assertEq(IERC20(USDC).balanceOf(address(gov)), 40 * USD);  // Withdrawn to HeliosDAO address for funding
     }
 
     function test_distributeToHolders() public {
@@ -81,7 +81,7 @@ contract MapleTreasuryTest is TestUtil {
 
     function test_convertERC20() public {
 
-        IMapleGlobals _globals = IMapleGlobals(address(globals));
+        IHeliosGlobals _globals = IHeliosGlobals(address(globals));
 
         assertEq(IERC20(WBTC).balanceOf(address(treasury)), 0);
         assertEq(IERC20(WETH).balanceOf(address(treasury)), 0);
