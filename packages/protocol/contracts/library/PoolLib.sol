@@ -50,7 +50,7 @@ library PoolLib {
         require(stakingFee.add(delegateFee) <= 10_000,         "P:INVALID_FEES");
         require(
             globals.isValidBalancerPool(address(stakeAsset)) &&
-            bPool.isBound(globals.mpl())                     &&
+            bPool.isBound(globals.hls())                     &&
             bPool.isBound(liquidityAsset)                    &&
             bPool.isFinalized(),
             "P:INVALID_BALANCER_POOL"

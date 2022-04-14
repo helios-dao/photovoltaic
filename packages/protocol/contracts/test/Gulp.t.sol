@@ -41,24 +41,24 @@ contract GulpTest is TestUtil {
         gov.setGovTreasury(treasury);
         fakeGov.setGovTreasury(treasury);
 
-        // Drawdown on loan will transfer fee to MPL token contract.
+        // Drawdown on loan will transfer fee to HLS token contract.
         setUpLoanAndDrawdown();
 
-        // Treasury processes fees, sends to MPL token holders.
+        // Treasury processes fees, sends to HLS token holders.
         // treasury.distributeToHolders();
         assertTrue(!fakeGov.try_distributeToHolders());
         assertTrue(     gov.try_distributeToHolders());
 
-        uint256 totalFundsToken = usdc.balanceOf(address(mpl));
-        uint256 mplBal          = mpl.balanceOf(address(bPool));
-        uint256 earnings        = mpl.withdrawableFundsOf(address(bPool));
+        uint256 totalFundsToken = usdc.balanceOf(address(hls));
+        uint256 hlsBal          = hls.balanceOf(address(bPool));
+        uint256 earnings        = hls.withdrawableFundsOf(address(bPool));
 
         assertEq(totalFundsToken, loan.principalOwed() * globals.treasuryFee() / 10_000);
-        assertEq(mplBal,          155_000 * WAD);
-        withinDiff(earnings, totalFundsToken * mplBal / mpl.totalSupply(), 1);
+        assertEq(hlsBal,          155_000 * WAD);
+        withinDiff(earnings, totalFundsToken * hlsBal / hls.totalSupply(), 1);
 
-        // MPL is held by Balancer Pool, claim on behalf of BPool.
-        mpl.withdrawFundsOnBehalf(address(bPool));
+        // HLS is held by Balancer Pool, claim on behalf of BPool.
+        hls.withdrawFundsOnBehalf(address(bPool));
 
         uint256 usdcBal_preGulp = bPool.getBalance(USDC);
 
@@ -67,30 +67,30 @@ contract GulpTest is TestUtil {
         uint256 usdcBal_postGulp = bPool.getBalance(USDC);
 
         assertEq(usdcBal_preGulp,  1_550_000 * USD);
-        assertEq(usdcBal_postGulp, usdcBal_preGulp + earnings); // USDC is transferred into Balancer pool, increasing value of MPL
+        assertEq(usdcBal_postGulp, usdcBal_preGulp + earnings); // USDC is transferred into Balancer pool, increasing value of HLS
     }
 
     function test_uniswap_pool_skim() public {
         setUpUniswapHlsUsdcPool(75_000 * WAD, 1_500_000 * USD);
 
         gov.setGovTreasury(treasury);
-        // Drawdown on loan will transfer fee to MPL token contract.
+        // Drawdown on loan will transfer fee to HLS token contract.
         setUpLoanAndDrawdown();
 
         assertTrue(gov.try_distributeToHolders());
 
-        uint256 totalFundsToken = IERC20(USDC).balanceOf(address(mpl));
-        uint256 mplBal          = mpl.balanceOf(address(uniswapPair));
-        uint256 earnings        = mpl.withdrawableFundsOf(address(uniswapPair));
+        uint256 totalFundsToken = IERC20(USDC).balanceOf(address(hls));
+        uint256 hlsBal          = hls.balanceOf(address(uniswapPair));
+        uint256 earnings        = hls.withdrawableFundsOf(address(uniswapPair));
 
         assertEq(totalFundsToken, loan.principalOwed() * globals.treasuryFee() / 10_000);
-        assertEq(mplBal,          75_000 * WAD);
-        withinDiff(earnings, totalFundsToken * mplBal / mpl.totalSupply(), 1);
+        assertEq(hlsBal,          75_000 * WAD);
+        withinDiff(earnings, totalFundsToken * hlsBal / hls.totalSupply(), 1);
 
         (uint256 before_reserve0, uint256 before_reserve1, ) = uniswapPair.getReserves();
 
-        // MPL is held by Balancer Pool, claim on behalf of BPool.
-        mpl.withdrawFundsOnBehalf(address(uniswapPair));
+        // HLS is held by Balancer Pool, claim on behalf of BPool.
+        hls.withdrawFundsOnBehalf(address(uniswapPair));
 
         (uint256 after_reserve0, uint256 after_reserve1, ) = uniswapPair.getReserves();
 

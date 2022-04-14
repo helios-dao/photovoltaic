@@ -22,43 +22,43 @@ contract HlsRewardsTest is TestUtil {
     /*** Admin Functions Testing ***/
     /*******************************/
     function test_transferOwnership() public {
-        assertEq(mplRewards.owner(), address(gov));
+        assertEq(hlsRewards.owner(), address(gov));
 
         assertTrue(!fakeGov.try_transferOwnership(address(fakeGov)));
         assertTrue(     gov.try_transferOwnership(address(fakeGov)));
 
-        assertEq(mplRewards.owner(), address(fakeGov));
+        assertEq(hlsRewards.owner(), address(fakeGov));
 
         assertTrue(   !gov.try_transferOwnership(address(gov)));
         assertTrue(fakeGov.try_transferOwnership(address(gov)));
 
-        assertEq(mplRewards.owner(), address(gov));
+        assertEq(hlsRewards.owner(), address(gov));
     }
 
     function test_notifyRewardAmount() public {
-        assertEq(mplRewards.periodFinish(),              0);
-        assertEq(mplRewards.rewardRate(),                0);
-        assertEq(mplRewards.rewardsDuration(),      7 days);  // Pre set value
-        assertEq(mplRewards.lastUpdateTime(),            0);
-        assertEq(mplRewards.rewardPerTokenStored(),      0);
+        assertEq(hlsRewards.periodFinish(),              0);
+        assertEq(hlsRewards.rewardRate(),                0);
+        assertEq(hlsRewards.rewardsDuration(),      7 days);  // Pre set value
+        assertEq(hlsRewards.lastUpdateTime(),            0);
+        assertEq(hlsRewards.rewardPerTokenStored(),      0);
 
-        mpl.transfer(address(mplRewards), 25_000 * WAD);
+        hls.transfer(address(hlsRewards), 25_000 * WAD);
 
         assertTrue(!fakeGov.try_notifyRewardAmount(25_000 * WAD));
         assertTrue(     gov.try_notifyRewardAmount(25_000 * WAD));
 
-        assertEq(mplRewards.rewardRate(),     uint256(25_000 * WAD) / 7 days);
-        assertEq(mplRewards.lastUpdateTime(),                block.timestamp);
-        assertEq(mplRewards.periodFinish(),         block.timestamp + 7 days);
+        assertEq(hlsRewards.rewardRate(),     uint256(25_000 * WAD) / 7 days);
+        assertEq(hlsRewards.lastUpdateTime(),                block.timestamp);
+        assertEq(hlsRewards.periodFinish(),         block.timestamp + 7 days);
     }
 
     function test_updatePeriodFinish() public {
-        assertEq(mplRewards.periodFinish(), 0);
+        assertEq(hlsRewards.periodFinish(), 0);
 
         assertTrue(!fakeGov.try_updatePeriodFinish(block.timestamp + 30 days));
         assertTrue(     gov.try_updatePeriodFinish(block.timestamp + 30 days));
 
-        assertEq(mplRewards.periodFinish(), block.timestamp + 30 days);
+        assertEq(hlsRewards.periodFinish(), block.timestamp + 30 days);
     }
 
     function test_recoverERC20() public {
@@ -66,92 +66,92 @@ contract HlsRewardsTest is TestUtil {
 
         assertEq(IERC20(USDC).balanceOf(address(fay)),            1000 * USD);
         assertEq(IERC20(USDC).balanceOf(address(gov)),                     0);
-        assertEq(IERC20(USDC).balanceOf(address(mplRewards)),              0);
-        assertEq(mplRewards.balanceOf(address(fay)),                       0);
-        assertEq(mplRewards.totalSupply(),                                 0);
+        assertEq(IERC20(USDC).balanceOf(address(hlsRewards)),              0);
+        assertEq(hlsRewards.balanceOf(address(fay)),                       0);
+        assertEq(hlsRewards.totalSupply(),                                 0);
 
-        fay.transfer(USDC, address(mplRewards), 1000 * USD); // Ali transfers USDC directly into Staking rewards accidentally
+        fay.transfer(USDC, address(hlsRewards), 1000 * USD); // Ali transfers USDC directly into Staking rewards accidentally
 
         assertEq(IERC20(USDC).balanceOf(address(fay)),                     0);
         assertEq(IERC20(USDC).balanceOf(address(gov)),                     0);
-        assertEq(IERC20(USDC).balanceOf(address(mplRewards)),     1000 * USD);
-        assertEq(mplRewards.balanceOf(address(fay)),                       0);
-        assertEq(mplRewards.totalSupply(),                                 0);
+        assertEq(IERC20(USDC).balanceOf(address(hlsRewards)),     1000 * USD);
+        assertEq(hlsRewards.balanceOf(address(fay)),                       0);
+        assertEq(hlsRewards.totalSupply(),                                 0);
 
         assertTrue(!fakeGov.try_recoverERC20(USDC, 400 * USD));
         assertTrue(     gov.try_recoverERC20(USDC, 400 * USD));
 
         assertEq(IERC20(USDC).balanceOf(address(fay)),                     0);
         assertEq(IERC20(USDC).balanceOf(address(gov)),             400 * USD);
-        assertEq(IERC20(USDC).balanceOf(address(mplRewards)),      600 * USD);
-        assertEq(mplRewards.balanceOf(address(fay)),                       0);
-        assertEq(mplRewards.totalSupply(),                                 0);
+        assertEq(IERC20(USDC).balanceOf(address(hlsRewards)),      600 * USD);
+        assertEq(hlsRewards.balanceOf(address(fay)),                       0);
+        assertEq(hlsRewards.totalSupply(),                                 0);
 
         assertTrue(!fakeGov.try_recoverERC20(USDC, 600 * USD));
         assertTrue(     gov.try_recoverERC20(USDC, 600 * USD));
 
         assertEq(IERC20(USDC).balanceOf(address(fay)),                     0);
         assertEq(IERC20(USDC).balanceOf(address(gov)),            1000 * USD);
-        assertEq(IERC20(USDC).balanceOf(address(mplRewards)),              0);
-        assertEq(mplRewards.balanceOf(address(fay)),                       0);
-        assertEq(mplRewards.totalSupply(),                                 0);
+        assertEq(IERC20(USDC).balanceOf(address(hlsRewards)),              0);
+        assertEq(hlsRewards.balanceOf(address(fay)),                       0);
+        assertEq(hlsRewards.totalSupply(),                                 0);
     }
 
     function test_setRewardsDuration() public {
-        assertEq(mplRewards.periodFinish(),         0);
-        assertEq(mplRewards.rewardsDuration(), 7 days);
+        assertEq(hlsRewards.periodFinish(),         0);
+        assertEq(hlsRewards.rewardsDuration(), 7 days);
 
-        mpl.transfer(address(mplRewards), 25_000 * WAD);
+        hls.transfer(address(hlsRewards), 25_000 * WAD);
 
         gov.notifyRewardAmount(25_000 * WAD);
 
-        assertEq(mplRewards.periodFinish(),    block.timestamp + 7 days);
-        assertEq(mplRewards.rewardsDuration(),                   7 days);
+        assertEq(hlsRewards.periodFinish(),    block.timestamp + 7 days);
+        assertEq(hlsRewards.rewardsDuration(),                   7 days);
 
         assertTrue(!fakeGov.try_setRewardsDuration(30 days));
         assertTrue(    !gov.try_setRewardsDuration(30 days)); // Won't work because current rewards period hasn't ended
 
-        hevm.warp(mplRewards.periodFinish());
+        hevm.warp(hlsRewards.periodFinish());
 
         assertTrue(!gov.try_setRewardsDuration(30 days)); // Won't work because current rewards period hasn't ended
 
-        hevm.warp(mplRewards.periodFinish() + 1);
+        hevm.warp(hlsRewards.periodFinish() + 1);
 
         assertTrue(gov.try_setRewardsDuration(30 days)); // Works because current rewards period has ended
 
-        assertEq(mplRewards.rewardsDuration(), 30 days);
+        assertEq(hlsRewards.rewardsDuration(), 30 days);
     }
 
     function test_setPaused() public {
-        assertTrue(!mplRewards.paused());
+        assertTrue(!hlsRewards.paused());
 
         // Fay can stake
-        fay.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fay.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
         assertTrue(fay.try_stake(100 * WAD));
 
         // Set to paused
         assertTrue(!fakeGov.try_setPaused(true));
         assertTrue(     gov.try_setPaused(true));
 
-        assertTrue(mplRewards.paused());
+        assertTrue(hlsRewards.paused());
 
         // Fez can't stake
-        fez.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fez.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
         assertTrue(!fez.try_stake(100 * WAD));
 
         // Fay can't withdraw
-        fay.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fay.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
         assertTrue(!fay.try_withdraw(100 * WAD));
 
         // Set to unpaused
         assertTrue(!fakeGov.try_setPaused(false));
         assertTrue(     gov.try_setPaused(false));
 
-        assertTrue(!mplRewards.paused());
+        assertTrue(!hlsRewards.paused());
         assertTrue(fay.try_withdraw(100 * WAD));
 
         // Fez can stake
-        fez.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fez.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
         assertTrue(fez.try_stake(100 * WAD));
     }
 
@@ -163,48 +163,48 @@ contract HlsRewardsTest is TestUtil {
 
         assertEq(pool.balanceOf(address(fay)),           1000 * WAD);
         assertEq(pool.depositDate(address(fay)),              start);
-        assertEq(pool.depositDate(address(mplRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
-        assertEq(mplRewards.balanceOf(address(fay)),              0);
-        assertEq(mplRewards.totalSupply(),                        0);
+        assertEq(pool.depositDate(address(hlsRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
+        assertEq(hlsRewards.balanceOf(address(fay)),              0);
+        assertEq(hlsRewards.totalSupply(),                        0);
 
         hevm.warp(start + 1 days); // Warp to ensure no effect on depositDates
 
         assertTrue(!fay.try_stake(100 * WAD));  // Can't stake before approval
 
-        fay.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fay.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
 
         assertTrue(!fay.try_stake(0));          // Can't stake zero
         assertTrue( fay.try_stake(100 * WAD));  // Can stake after approval
 
         assertEq(pool.balanceOf(address(fay)),          1000 * WAD);  // PoolFDT balance doesn't change
         assertEq(pool.depositDate(address(fay)),             start);  // Has not changed
-        assertEq(pool.depositDate(address(mplRewards)),          0);  // Has not changed
-        assertEq(mplRewards.balanceOf(address(fay)),     100 * WAD);
-        assertEq(mplRewards.totalSupply(),               100 * WAD);
+        assertEq(pool.depositDate(address(hlsRewards)),          0);  // Has not changed
+        assertEq(hlsRewards.balanceOf(address(fay)),     100 * WAD);
+        assertEq(hlsRewards.totalSupply(),               100 * WAD);
     }
 
     function test_withdraw() public {
         uint256 start = block.timestamp;
 
-        fay.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fay.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
         fay.stake(100 * WAD);
 
         hevm.warp(start + 1 days); // Warp to ensure no effect on depositDates
 
         assertEq(pool.balanceOf(address(fay)),           1000 * WAD);  // PoolFDT balance doesn't change
         assertEq(pool.depositDate(address(fay)),              start);
-        assertEq(pool.depositDate(address(mplRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
-        assertEq(mplRewards.balanceOf(address(fay)),      100 * WAD);
-        assertEq(mplRewards.totalSupply(),                100 * WAD);
+        assertEq(pool.depositDate(address(hlsRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
+        assertEq(hlsRewards.balanceOf(address(fay)),      100 * WAD);
+        assertEq(hlsRewards.totalSupply(),                100 * WAD);
 
         assertTrue(!fay.try_withdraw(0));          // Can't withdraw zero
         assertTrue( fay.try_withdraw(100 * WAD));  // Can withdraw
 
         assertEq(pool.balanceOf(address(fay)),           1000 * WAD);
         assertEq(pool.depositDate(address(fay)),              start);  // Does not change
-        assertEq(pool.depositDate(address(mplRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
-        assertEq(mplRewards.balanceOf(address(fay)),              0);
-        assertEq(mplRewards.totalSupply(),                        0);
+        assertEq(pool.depositDate(address(hlsRewards)),           0);  // HlsRewards depDate should always be zero so that it can avoid lockup logic
+        assertEq(hlsRewards.balanceOf(address(fay)),              0);
+        assertEq(hlsRewards.totalSupply(),                        0);
     }
 
     function assertRewardsAccounting(
@@ -218,34 +218,34 @@ contract HlsRewardsTest is TestUtil {
     )
         public
     {
-        assertEq(mplRewards.totalSupply(),                   totalSupply);
-        assertEq(mplRewards.rewardPerTokenStored(),          rewardPerTokenStored);
-        assertEq(mplRewards.userRewardPerTokenPaid(account), userRewardPerTokenPaid);
-        assertEq(mplRewards.earned(account),                 earned);
-        assertEq(mplRewards.rewards(account),                rewards);
-        assertEq(mpl.balanceOf(account),                     rewardTokenBal);
+        assertEq(hlsRewards.totalSupply(),                   totalSupply);
+        assertEq(hlsRewards.rewardPerTokenStored(),          rewardPerTokenStored);
+        assertEq(hlsRewards.userRewardPerTokenPaid(account), userRewardPerTokenPaid);
+        assertEq(hlsRewards.earned(account),                 earned);
+        assertEq(hlsRewards.rewards(account),                rewards);
+        assertEq(hls.balanceOf(account),                     rewardTokenBal);
     }
 
     /**********************************/
     /*** Rewards accounting testing ***/
     /**********************************/
     function test_rewards_single_epoch() public {
-        fay.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
-        fez.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fay.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
+        fez.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
         fay.stake(10 * WAD);
 
-        mpl.transfer(address(mplRewards), 25_000 * WAD);
+        hls.transfer(address(hlsRewards), 25_000 * WAD);
 
         gov.setRewardsDuration(30 days);
 
         gov.notifyRewardAmount(25_000 * WAD);
 
-        uint256 rewardRate = mplRewards.rewardRate();
+        uint256 rewardRate = hlsRewards.rewardRate();
         uint256 start      = block.timestamp;
 
         assertEq(rewardRate, uint256(25_000 * WAD) / 30 days);
 
-        assertEq(mpl.balanceOf(address(mplRewards)), 25_000 * WAD);
+        assertEq(hls.balanceOf(address(hlsRewards)), 25_000 * WAD);
 
         /*** Ali time = 0 post-stake ***/
         assertRewardsAccounting({
@@ -471,8 +471,8 @@ contract HlsRewardsTest is TestUtil {
     }
 
     function test_rewards_multi_epoch() public {
-        fay.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
-        fez.increaseCustodyAllowance(address(pool), address(mplRewards), 100 * WAD);
+        fay.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
+        fez.increaseCustodyAllowance(address(pool), address(hlsRewards), 100 * WAD);
 
         fay.stake(10 * WAD);
         fez.stake(30 * WAD);
@@ -483,12 +483,12 @@ contract HlsRewardsTest is TestUtil {
 
         gov.setRewardsDuration(30 days);
 
-        mpl.transfer(address(mplRewards), 25_000 * WAD);
+        hls.transfer(address(hlsRewards), 25_000 * WAD);
 
         gov.notifyRewardAmount(25_000 * WAD);
 
-        uint256 rewardRate   = mplRewards.rewardRate();
-        uint256 periodFinish = mplRewards.periodFinish();
+        uint256 rewardRate   = hlsRewards.rewardRate();
+        uint256 periodFinish = hlsRewards.periodFinish();
         uint256 start        = block.timestamp;
 
         assertEq(rewardRate, uint256(25_000 * WAD) / 30 days);
@@ -538,13 +538,13 @@ contract HlsRewardsTest is TestUtil {
             rewardTokenBal:         dTime1_rpt * 10 * WAD / WAD   // Total claimed earnings from pool
         });
 
-        assertEq(mplRewards.lastUpdateTime(),           start + 30 days);
-        assertEq(mplRewards.lastTimeRewardApplicable(), start + 30 days);
+        assertEq(hlsRewards.lastUpdateTime(),           start + 30 days);
+        assertEq(hlsRewards.lastTimeRewardApplicable(), start + 30 days);
 
         hevm.warp(periodFinish + 1 days);  // Warp another day after the epoch is finished
 
-        assertEq(mplRewards.lastUpdateTime(),           start + 30 days);  // Doesn't change
-        assertEq(mplRewards.lastTimeRewardApplicable(), start + 30 days);  // Doesn't change
+        assertEq(hlsRewards.lastUpdateTime(),           start + 30 days);  // Doesn't change
+        assertEq(hlsRewards.lastTimeRewardApplicable(), start + 30 days);  // Doesn't change
 
         /*** Ali time = (31 days) pre-claim (ASSERT NOTHING CHANGES DUE TO EPOCH BEING OVER) ***/
         assertRewardsAccounting({
@@ -574,15 +574,15 @@ contract HlsRewardsTest is TestUtil {
         /*** EPOCH 2 STARTS ***/
         /**********************/
 
-        assertEq(mpl.balanceOf(address(mplRewards)), 25_000 * WAD - dTime1_rpt * 10 * WAD / WAD);  // Bob's claimable MPL is still in the contract
+        assertEq(hls.balanceOf(address(hlsRewards)), 25_000 * WAD - dTime1_rpt * 10 * WAD / WAD);  // Bob's claimable HLS is still in the contract
 
         gov.setRewardsDuration(15 days);
 
-        mpl.transfer(address(mplRewards), 40_000 * WAD);
+        hls.transfer(address(hlsRewards), 40_000 * WAD);
 
         gov.notifyRewardAmount(40_000 * WAD);
 
-        uint256 rewardRate2 = mplRewards.rewardRate(); // New rewardRate
+        uint256 rewardRate2 = hlsRewards.rewardRate(); // New rewardRate
 
         assertEq(rewardRate2, uint256(40_000 * WAD) / 15 days);
 

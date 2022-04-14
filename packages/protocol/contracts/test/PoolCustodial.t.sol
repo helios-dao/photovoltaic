@@ -20,9 +20,9 @@ contract PoolCustodialTest is TestUtil {
     TestObj withdrawableFundsOf_fez;  // FDT accounting of interest
     TestObj withdrawableFundsOf_fox;  // FDT accounting of interest
 
-    TestObj mplEarnings_fay;  // MPL earnings from yield farming
-    TestObj mplEarnings_fez;  // MPL earnings from yield farming
-    TestObj mplEarnings_fox;  // MPL earnings from yield farming
+    TestObj hlsEarnings_fay;  // HLS earnings from yield farming
+    TestObj hlsEarnings_fez;  // HLS earnings from yield farming
+    TestObj hlsEarnings_fox;  // HLS earnings from yield farming
 
     function setUp() public {
         setUpGlobals();
@@ -45,9 +45,9 @@ contract PoolCustodialTest is TestUtil {
         withdrawableFundsOf_fez.pre = withdrawableFundsOf_fez.post;
         withdrawableFundsOf_fox.pre = withdrawableFundsOf_fox.post;
 
-        mplEarnings_fay.pre = mplEarnings_fay.post;
-        mplEarnings_fez.pre = mplEarnings_fez.post;
-        mplEarnings_fox.pre = mplEarnings_fox.post;
+        hlsEarnings_fay.pre = hlsEarnings_fay.post;
+        hlsEarnings_fez.pre = hlsEarnings_fez.post;
+        hlsEarnings_fox.pre = hlsEarnings_fox.post;
 
         // Update post state
         principalOut       = pool.principalOut();
@@ -60,9 +60,9 @@ contract PoolCustodialTest is TestUtil {
         withdrawableFundsOf_fez.post = pool.withdrawableFundsOf(address(fez));
         withdrawableFundsOf_fox.post = pool.withdrawableFundsOf(address(fox));
 
-        mplEarnings_fay.post = mplRewards.earned(address(fay));
-        mplEarnings_fez.post = mplRewards.earned(address(fez));
-        mplEarnings_fox.post = mplRewards.earned(address(fox));
+        hlsEarnings_fay.post = hlsRewards.earned(address(fay));
+        hlsEarnings_fez.post = hlsRewards.earned(address(fez));
+        hlsEarnings_fox.post = hlsRewards.earned(address(fox));
     }
 
     function test_interest_plus_farming(uint256 depositAmt1, uint256 depositAmt2, uint256 depositAmt3) public {
@@ -95,9 +95,9 @@ contract PoolCustodialTest is TestUtil {
         assertEq(withdrawableFundsOf_fez.post, 0);
         assertEq(withdrawableFundsOf_fox.post, 0);
 
-        assertEq(mplEarnings_fay.post, 0);
-        assertEq(mplEarnings_fez.post, 0);
-        assertEq(mplEarnings_fox.post, 0);
+        assertEq(hlsEarnings_fay.post, 0);
+        assertEq(hlsEarnings_fez.post, 0);
+        assertEq(hlsEarnings_fox.post, 0);
 
         /*************************************************************/
         /*** Create Loan, draw down, make payment, claim from Pool ***/
@@ -117,10 +117,10 @@ contract PoolCustodialTest is TestUtil {
         uint256 dTime = block.timestamp - start;
 
         uint256 interest          = interestSum;
-        uint256 totalHlsDisbursed = mplRewards.rewardRate() * dTime;
+        uint256 totalHlsDisbursed = hlsRewards.rewardRate() * dTime;
 
         uint256 poolApy = toApy(interest,          totalDeposits, dTime);
-        uint256 mplApy  = toApy(totalHlsDisbursed, toWad(totalDeposits), dTime);
+        uint256 hlsApy  = toApy(totalHlsDisbursed, toWad(totalDeposits), dTime);
 
         /***********************************/
         /*** Post One Loan Payment State ***/
@@ -130,16 +130,16 @@ contract PoolCustodialTest is TestUtil {
 
         assertEq(withdrawableFundsOf_fox.post, 0);
 
-        withinPrecision(mplEarnings_fay.post, calcPortion(depositAmt1, totalHlsDisbursed, totalDeposits), 10);
-        withinPrecision(mplEarnings_fez.post, calcPortion(depositAmt2, totalHlsDisbursed, totalDeposits), 10);
+        withinPrecision(hlsEarnings_fay.post, calcPortion(depositAmt1, totalHlsDisbursed, totalDeposits), 10);
+        withinPrecision(hlsEarnings_fez.post, calcPortion(depositAmt2, totalHlsDisbursed, totalDeposits), 10);
 
-        assertEq(mplEarnings_fox.post, 0);
+        assertEq(hlsEarnings_fox.post, 0);
 
         withinDiff(toApy(withdrawableFundsOf_fay.post, depositAmt1, dTime), poolApy, 1);
         withinDiff(toApy(withdrawableFundsOf_fez.post, depositAmt2, dTime), poolApy, 1);
 
-        withinDiff(toApy(mplEarnings_fay.post, toWad(depositAmt1), dTime), mplApy, 1);
-        withinDiff(toApy(mplEarnings_fez.post, toWad(depositAmt2), dTime), mplApy, 1);
+        withinDiff(toApy(hlsEarnings_fay.post, toWad(depositAmt1), dTime), hlsApy, 1);
+        withinDiff(toApy(hlsEarnings_fez.post, toWad(depositAmt2), dTime), hlsApy, 1);
 
         /***********************************************************/
         /*** Fox deposits into the pool and starts yield farming ***/
@@ -160,11 +160,11 @@ contract PoolCustodialTest is TestUtil {
         updateState();
         dTime = block.timestamp - start - dTime;
 
-        totalHlsDisbursed = mplRewards.rewardRate() * dTime;
+        totalHlsDisbursed = hlsRewards.rewardRate() * dTime;
         interest          = interestSum - interest;
 
         poolApy = toApy(interest,          totalDeposits, dTime);
-        mplApy  = toApy(totalHlsDisbursed, toWad(totalDeposits), dTime);
+        hlsApy  = toApy(totalHlsDisbursed, toWad(totalDeposits), dTime);
 
         /***********************************/
         /*** Post One Loan Payment State ***/
@@ -173,17 +173,17 @@ contract PoolCustodialTest is TestUtil {
         withinPrecision(withdrawableFundsOf_fez.post, withdrawableFundsOf_fez.pre + calcPortion(depositAmt2, interest, totalDeposits), 6);
         withinPrecision(withdrawableFundsOf_fox.post,                               calcPortion(depositAmt3, interest, totalDeposits), 6);
 
-        withinPrecision(mplEarnings_fay.post, mplEarnings_fay.pre + calcPortion(depositAmt1, totalHlsDisbursed, totalDeposits), 10);
-        withinPrecision(mplEarnings_fez.post, mplEarnings_fez.pre + calcPortion(depositAmt2, totalHlsDisbursed, totalDeposits), 10);
-        withinPrecision(mplEarnings_fox.post,                       calcPortion(depositAmt3, totalHlsDisbursed, totalDeposits), 10);
+        withinPrecision(hlsEarnings_fay.post, hlsEarnings_fay.pre + calcPortion(depositAmt1, totalHlsDisbursed, totalDeposits), 10);
+        withinPrecision(hlsEarnings_fez.post, hlsEarnings_fez.pre + calcPortion(depositAmt2, totalHlsDisbursed, totalDeposits), 10);
+        withinPrecision(hlsEarnings_fox.post,                       calcPortion(depositAmt3, totalHlsDisbursed, totalDeposits), 10);
 
         withinDiff(toApy(withdrawableFundsOf_fay.post - withdrawableFundsOf_fay.pre, depositAmt1, dTime), poolApy, 1);
         withinDiff(toApy(withdrawableFundsOf_fez.post - withdrawableFundsOf_fez.pre, depositAmt2, dTime), poolApy, 1);
         withinDiff(toApy(withdrawableFundsOf_fox.post,                               depositAmt3, dTime), poolApy, 1);
 
-        withinDiff(toApy(mplEarnings_fay.post - mplEarnings_fay.pre, toWad(depositAmt1), dTime), mplApy, 1);
-        withinDiff(toApy(mplEarnings_fez.post - mplEarnings_fez.pre, toWad(depositAmt2), dTime), mplApy, 1);
-        withinDiff(toApy(mplEarnings_fox.post,                       toWad(depositAmt3), dTime), mplApy, 1);
+        withinDiff(toApy(hlsEarnings_fay.post - hlsEarnings_fay.pre, toWad(depositAmt1), dTime), hlsApy, 1);
+        withinDiff(toApy(hlsEarnings_fez.post - hlsEarnings_fez.pre, toWad(depositAmt2), dTime), hlsApy, 1);
+        withinDiff(toApy(hlsEarnings_fox.post,                       toWad(depositAmt3), dTime), hlsApy, 1);
     }
 
     function test_custody_and_transfer(uint256 depositAmt, uint256 custodyAmt1, uint256 custodyAmt2) public {

@@ -9,9 +9,9 @@ interface IHeliosGlobals {
 
     function globalAdmin() external view returns (address);
 
-    function mpl() external view returns (address);
+    function hls() external view returns (address);
 
-    function mapleTreasury() external view returns (address);
+    function heliosTreasury() external view returns (address);
 
     function isValidBalancerPool(address) external view returns (bool);
 

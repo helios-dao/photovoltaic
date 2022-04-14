@@ -22,7 +22,7 @@ contract HeliosTokenTest is HeliosTest {
 
     function setUp() external {
         hevm.warp(deadline - 52 weeks);
-        token = new HeliosToken("Helios Token", "MPL", address(0x1111111111111111111111111111111111111111));
+        token = new HeliosToken("Helios Token", "HLS", address(0x1111111111111111111111111111111111111111));
         usr   = new HeliosTokenUser();
     }
 

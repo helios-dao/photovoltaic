@@ -17,25 +17,25 @@ contract HeliosTreasury {
     using SafeMath  for uint256;
     using SafeERC20 for IERC20;
 
-    address public immutable mpl;            // The address of ERC-2222 Helios Token for the Helios protocol.
+    address public immutable hls;            // The address of ERC-2222 Helios Token for the Helios protocol.
     address public immutable fundsToken;     // The address of the `fundsToken` of the ERC-2222 Helios Token.
     address public immutable uniswapRouter;  // The address of the official UniswapV2 router.
     address public           globals;        // The address of an instance of HeliosGlobals.
 
     /**
         @dev   Instantiates the HeliosTreasury contract.
-        @param _mpl           The address of ERC-2222 Helios Token for the Helios protocol.
+        @param _hls           The address of ERC-2222 Helios Token for the Helios protocol.
         @param _fundsToken    The address of the `fundsToken` of the ERC-2222 Helios Token.
         @param _uniswapRouter The address of the official UniswapV2 router.
         @param _globals       The address of an instance of HeliosGlobals.
     */
     constructor(
-        address _mpl,
+        address _hls,
         address _fundsToken,
         address _uniswapRouter,
         address _globals
     ) public {
-        mpl           = _mpl;
+        hls           = _hls;
         fundsToken    = _fundsToken;
         uniswapRouter = _uniswapRouter;
         globals       = _globals;
@@ -76,15 +76,15 @@ contract HeliosTreasury {
     }
 
     /**
-        @dev Passes through the current `fundsToken` balance of the Treasury to Helios Token, where it can be claimed by MPL holders.
+        @dev Passes through the current `fundsToken` balance of the Treasury to Helios Token, where it can be claimed by hls holders.
              Only the Governor can call this function.
         @dev It emits a `DistributedToHolders` event.
     */
     function distributeToHolders() isGovernor external {
         IERC20 _fundsToken = IERC20(fundsToken);
         uint256 distributeAmount = _fundsToken.balanceOf(address(this));
-        _fundsToken.safeTransfer(mpl, distributeAmount);
-        IProtocolHeliosToken(mpl).updateFundsReceived();
+        _fundsToken.safeTransfer(hls, distributeAmount);
+        IProtocolHeliosToken(hls).updateFundsReceived();
         emit DistributedToHolders(distributeAmount);
     }
 

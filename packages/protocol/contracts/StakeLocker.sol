@@ -50,7 +50,7 @@ contract StakeLocker is StakeLockerFDT, Pausable {
         address _stakeAsset,
         address _liquidityAsset,
         address _pool
-    ) StakeLockerFDT("Helios StakeLocker", "MPLSTAKE", _liquidityAsset) public {
+    ) StakeLockerFDT("Helios StakeLocker", "HLSSTAKE", _liquidityAsset) public {
         liquidityAsset = _liquidityAsset;
         stakeAsset     = IERC20(_stakeAsset);
         pool           = _pool;

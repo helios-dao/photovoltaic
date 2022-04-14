@@ -19,13 +19,13 @@ contract HeliosTreasuryTest is TestUtil {
     }
 
     function test_setGlobals() public {
-        HeliosGlobals globals2 = fakeGov.createGlobals(address(mpl));                // Create upgraded HeliosGlobals
+        HeliosGlobals globals2 = fakeGov.createGlobals(address(hls));                // Create upgraded HeliosGlobals
 
         assertEq(address(treasury.globals()), address(globals));
 
         assertTrue(!fakeGov.try_setGlobals(address(treasury), address(globals2)));  // Non-governor cannot set new globals
 
-        globals2 = gov.createGlobals(address(mpl));                                 // Create upgraded HeliosGlobals
+        globals2 = gov.createGlobals(address(hls));                                 // Create upgraded HeliosGlobals
 
         assertTrue(gov.try_setGlobals(address(treasury), address(globals2)));       // Governor can set new globals
         assertEq(address(treasury.globals()), address(globals2));                   // Globals is updated
@@ -42,38 +42,38 @@ contract HeliosTreasuryTest is TestUtil {
         assertTrue(!fakeGov.try_reclaimERC20_treasury(USDC, 40 * USD));  // Non-governor can't withdraw
         assertTrue(     gov.try_reclaimERC20_treasury(USDC, 40 * USD));
 
-        assertEq(IERC20(USDC).balanceOf(address(treasury)), 60 * USD);  // Can be distributed to MPL holders
+        assertEq(IERC20(USDC).balanceOf(address(treasury)), 60 * USD);  // Can be distributed to HLS holders
         assertEq(IERC20(USDC).balanceOf(address(gov)), 40 * USD);  // Withdrawn to HeliosDAO address for funding
     }
 
     function test_distributeToHolders() public {
-        assertEq(mpl.balanceOf(address(hal)), 0);
-        assertEq(mpl.balanceOf(address(hue)), 0);
+        assertEq(hls.balanceOf(address(hal)), 0);
+        assertEq(hls.balanceOf(address(hue)), 0);
 
-        mpl.transfer(address(hal), mpl.totalSupply() * 25 / 100);  // 25%
-        mpl.transfer(address(hue), mpl.totalSupply() * 75 / 100);  // 75%
+        hls.transfer(address(hal), hls.totalSupply() * 25 / 100);  // 25%
+        hls.transfer(address(hue), hls.totalSupply() * 75 / 100);  // 75%
 
-        assertEq(mpl.balanceOf(address(hal)), 2_500_000 ether);
-        assertEq(mpl.balanceOf(address(hue)), 7_500_000 ether);
+        assertEq(hls.balanceOf(address(hal)), 2_500_000 ether);
+        assertEq(hls.balanceOf(address(hue)), 7_500_000 ether);
 
         assertEq(IERC20(USDC).balanceOf(address(treasury)), 0);
 
         IERC20(USDC).transfer(address(treasury), 100 * USD);
 
         assertEq(IERC20(USDC).balanceOf(address(treasury)), 100 * USD);
-        assertEq(IERC20(USDC).balanceOf(address(mpl)),              0);
+        assertEq(IERC20(USDC).balanceOf(address(hls)),              0);
 
         assertTrue(!fakeGov.try_distributeToHolders());  // Non-governor can't distribute
         assertTrue(     gov.try_distributeToHolders());  // Governor can distribute
 
         assertEq(IERC20(USDC).balanceOf(address(treasury)),         0);  // Withdraws all funds
-        assertEq(IERC20(USDC).balanceOf(address(mpl)),      100 * USD);  // Withdrawn to MPL address, where accounts can claim funds
+        assertEq(IERC20(USDC).balanceOf(address(hls)),      100 * USD);  // Withdrawn to HLS address, where accounts can claim funds
 
         assertEq(IERC20(USDC).balanceOf(address(hal)), 0);  // Token holder hasn't claimed
         assertEq(IERC20(USDC).balanceOf(address(hue)), 0);  // Token holder hasn't claimed
 
-        hal.withdrawFunds(address(mpl));
-        hue.withdrawFunds(address(mpl));
+        hal.withdrawFunds(address(hls));
+        hue.withdrawFunds(address(hls));
 
         withinDiff(IERC20(USDC).balanceOf(address(hal)), 25 * USD, 1);  // Token holder has claimed proportional share of USDC
         withinDiff(IERC20(USDC).balanceOf(address(hue)), 75 * USD, 1);  // Token holder has claimed proportional share of USDC

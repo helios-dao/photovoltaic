@@ -9,6 +9,6 @@ interface IHlsRewardsFactory {
 
     function setGlobals(address _globals) external;
 
-    function createHlsRewards(address rewardsToken, address stakingToken) external returns (address mplRewards);
+    function createHlsRewards(address rewardsToken, address stakingToken) external returns (address hlsRewards);
 
 }

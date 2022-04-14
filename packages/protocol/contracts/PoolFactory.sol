@@ -77,7 +77,7 @@ contract PoolFactory is Pausable {
         }
 
         string memory name   = "Helios Pool Token";
-        string memory symbol = "MPL-LP";
+        string memory symbol = "HLS-LP";
 
         Pool pool =
             new Pool(

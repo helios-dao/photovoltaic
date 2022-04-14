@@ -17,10 +17,10 @@ contract HeliosGlobalsTest is TestUtil {
 
     function test_constructor() public {
 
-        globals = new HeliosGlobals(address(gov), address(mpl), address(1));
+        globals = new HeliosGlobals(address(gov), address(hls), address(1));
 
         assertEq(globals.governor(),         address(gov));
-        assertEq(globals.mpl(),              address(mpl));
+        assertEq(globals.hls(),              address(hls));
         assertEq(globals.defaultGracePeriod(),     5 days);
         assertEq(globals.swapOutRequired(),        10_000);
         assertEq(globals.fundingPeriod(),         10 days);
@@ -211,11 +211,11 @@ contract HeliosGlobalsTest is TestUtil {
         assertEq(   globals.swapOutRequired(),     10_000);
 
         // setHeliosTreasury()
-        assertEq(   globals.mapleTreasury(), address(treasury));
+        assertEq(   globals.heliosTreasury(), address(treasury));
         assertTrue(!fakeGov.try_setHeliosTreasury(address(this)));
         assertTrue(    !gov.try_setHeliosTreasury(address(0)));
         assertTrue(     gov.try_setHeliosTreasury(address(this)));
-        assertEq(   globals.mapleTreasury(), address(this));
+        assertEq(   globals.heliosTreasury(), address(this));
 
         // setPriceOracle()
         assertTrue(!fakeGov.try_setPriceOracle(WETH, address(1)));

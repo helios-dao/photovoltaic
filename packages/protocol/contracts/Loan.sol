@@ -134,7 +134,7 @@ contract Loan is LoanFDT, Pausable {
         address _clFactory,
         uint256[5] memory specs,
         address[3] memory calcs
-    ) LoanFDT("Helios Loan Token", "MPL-LOAN", _liquidityAsset) public {
+    ) LoanFDT("Helios Loan Token", "HLS-LOAN", _liquidityAsset) public {
         IHeliosGlobals globals = _globals(msg.sender);
 
         // Perform validity cross-checks.
@@ -202,7 +202,7 @@ contract Loan is LoanFDT, Pausable {
         uint256 treasuryFee = globals.treasuryFee();
         uint256 investorFee = globals.investorFee();
 
-        address treasury = globals.mapleTreasury();
+        address treasury = globals.heliosTreasury();
 
         uint256 _feePaid = feePaid = amt.mul(investorFee).div(10_000);  // Update fees paid for `claim()`.
         uint256 treasuryAmt        = amt.mul(treasuryFee).div(10_000);  // Calculate amount to send to the HeliosTreasury.

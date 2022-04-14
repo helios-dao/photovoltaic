@@ -16,13 +16,13 @@ contract PoolFactoryTest is TestUtil {
     }
 
     function test_setGlobals() public {
-        HeliosGlobals globals2 = fakeGov.createGlobals(address(mpl));                   // Create upgraded HeliosGlobals
+        HeliosGlobals globals2 = fakeGov.createGlobals(address(hls));                   // Create upgraded HeliosGlobals
 
         assertEq(address(poolFactory.globals()), address(globals));
 
         assertTrue(!fakeGov.try_setGlobals(address(poolFactory), address(globals2)));  // Non-governor cannot set new globals
 
-        globals2 = gov.createGlobals(address(mpl));                                    // Create upgraded HeliosGlobals
+        globals2 = gov.createGlobals(address(hls));                                    // Create upgraded HeliosGlobals
 
         assertTrue(gov.try_setGlobals(address(poolFactory), address(globals2)));       // Governor can set new globals
         assertEq(address(poolFactory.globals()), address(globals2));                   // Globals is updated
@@ -89,7 +89,7 @@ contract PoolFactoryTest is TestUtil {
         assertTrue(!pat.try_createPool(
             address(poolFactory),
             DAI,
-            address(bPool),    // This pool uses MPL/USDC, so it can't cover DAI losses
+            address(bPool),    // This pool uses HLS/USDC, so it can't cover DAI losses
             address(slFactory),
             address(llFactory),
             500,
@@ -99,12 +99,12 @@ contract PoolFactoryTest is TestUtil {
     }
 
     // Tests failure mode in createStakeLocker
-    function test_createPool_createStakeLocker_no_mpl_token() public {
+    function test_createPool_createStakeLocker_no_hls_token() public {
 
         mint("USDC", address(this), 50_000_000 * 10 ** 6);
         mint("DAI", address(this), 50_000_000 ether);
 
-        // Initialize USDC/USDC Balancer pool (Doesn't include mpl)
+        // Initialize USDC/USDC Balancer pool (Doesn't include hls)
         bPool = IBPool(IBFactory(BPOOL_FACTORY).newBPool());
 
         IERC20(DAI).approve(address(bPool), uint256(-1));
@@ -161,9 +161,9 @@ contract PoolFactoryTest is TestUtil {
         bPool = IBPool(IBFactory(BPOOL_FACTORY).newBPool());
         mint("USDC", address(this), 50_000_000 * USD);
         usdc.approve(address(bPool), MAX_UINT);
-        mpl.approve(address(bPool),  MAX_UINT);
+        hls.approve(address(bPool),  MAX_UINT);
         bPool.bind(USDC,         50_000_000 * USD, 5 ether);  // Bind 50m USDC with 5 denormalization weight
-        bPool.bind(address(mpl),    100_000 * WAD, 5 ether);  // Bind 100k MPL with 5 denormalization weight
+        bPool.bind(address(hls),    100_000 * WAD, 5 ether);  // Bind 100k HLS with 5 denormalization weight
 
         // Pool:INVALID_BALANCER_POOL
         assertTrue(!pat.try_createPool(

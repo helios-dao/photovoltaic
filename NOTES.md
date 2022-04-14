@@ -21,7 +21,7 @@ key:
 - UniswapV2Router02: the uniswap router contract, used to "Liquidates a Borrower's collateral, when a default is triggered."
 - BFactory: the Balancer pool factory. Don't think it's used outside of tests?
 - ChainLinkAggregatorWBTC: lib?
--+ BPool: the MPL/USDC pool, used for staking MPL tokens
+-+ BPool: the HLS/USDC pool, used for staking HLS tokens
 -* HeliosGlobals: contract that holds a bunch of config variables for the entire protocol
 - Util: util lib that's imported in a bunch of contracts... does it really need to be deployed?
 - PoolLib: pool lib; necessary?

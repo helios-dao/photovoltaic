@@ -25,8 +25,8 @@ contract HeliosTokenUser is ERC20User {
         IHeliosToken(fdt).updateFundsReceived();
     }
 
-    function mplToken_permit(
-        address mplToken,
+    function hlsToken_permit(
+        address hlsToken,
         address owner,
         address spender,
         uint256 amount,
@@ -37,7 +37,7 @@ contract HeliosTokenUser is ERC20User {
     )
         external
     {
-        IHeliosToken(mplToken).permit(owner, spender, amount, deadline, v, r, s);
+        IHeliosToken(hlsToken).permit(owner, spender, amount, deadline, v, r, s);
     }
 
     /*********************/
@@ -57,7 +57,7 @@ contract HeliosTokenUser is ERC20User {
     }
 
     function try_permit(
-        address mplToken,
+        address hlsToken,
         address owner,
         address spender,
         uint256 amount,
@@ -68,7 +68,7 @@ contract HeliosTokenUser is ERC20User {
     )
         external returns (bool ok)
     {
-        (ok,) = mplToken.call(abi.encodeWithSelector(IHeliosToken.permit.selector, owner, spender, amount, deadline, v, r, s));
+        (ok,) = hlsToken.call(abi.encodeWithSelector(IHeliosToken.permit.selector, owner, spender, amount, deadline, v, r, s));
     }
 
 }

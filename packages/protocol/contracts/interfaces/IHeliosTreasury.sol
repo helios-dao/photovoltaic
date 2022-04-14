@@ -3,7 +3,7 @@ pragma solidity 0.6.11;
 
 interface IHeliosTreasury {
 
-    function mpl() external view returns (address);
+    function hls() external view returns (address);
 
     function fundsToken() external view returns (address);
 

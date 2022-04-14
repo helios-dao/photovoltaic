@@ -8,7 +8,7 @@ For Borrowers, Helios offers **transparent and efficient financing done entirely
 
 For Liquidity Providers, Helios offers a **sustainable yield source through professionally managed lending pools.**
 
-* Diversified exposure across premium borrowers with staked `MPL-<liquidityAsset>` 50-50 Balancer Pool Tokens (BPTs) providing reserve capital against loan defaults (E.g., MPL-USDC 50-50 BPTs for USDC Pools)
+* Diversified exposure across premium borrowers with staked `HLS-<liquidityAsset>` 50-50 Balancer Pool Tokens (BPTs) providing reserve capital against loan defaults (E.g., HLS-USDC 50-50 BPTs for USDC Pools)
 * Set and forget solution with diligence outsourced to Pool Delegates
 * Interest is accrued and reinvested to enable capital to compound over time
 

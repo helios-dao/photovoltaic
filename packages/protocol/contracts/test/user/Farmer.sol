@@ -9,11 +9,11 @@ import "../../interfaces/IPool.sol";
 
 contract Farmer is LP {
 
-    HlsRewards public mplRewards;
+    HlsRewards public hlsRewards;
     IERC20     public poolFDT;
 
-    constructor(HlsRewards _mplRewards, IERC20 _poolFDT) public {
-        mplRewards = _mplRewards;
+    constructor(HlsRewards _hlsRewards, IERC20 _poolFDT) public {
+        hlsRewards = _hlsRewards;
         poolFDT    = _poolFDT;
     }
 
@@ -34,19 +34,19 @@ contract Farmer is LP {
     }
 
     function stake(uint256 amt) public {
-        mplRewards.stake(amt);
+        hlsRewards.stake(amt);
     }
 
     function withdraw(uint256 amt) public {
-        mplRewards.withdraw(amt);
+        hlsRewards.withdraw(amt);
     }
 
     function getReward() public {
-        mplRewards.getReward();
+        hlsRewards.getReward();
     }
 
     function exit() public {
-        mplRewards.exit();
+        hlsRewards.exit();
     }
 
     /*********************/
@@ -55,12 +55,12 @@ contract Farmer is LP {
 
     function try_stake(uint256 amt) external returns (bool ok) {
         string memory sig = "stake(uint256)";
-        (ok,) = address(mplRewards).call(abi.encodeWithSignature(sig, amt));
+        (ok,) = address(hlsRewards).call(abi.encodeWithSignature(sig, amt));
     }
 
     function try_withdraw(uint256 amt) external returns (bool ok) {
         string memory sig = "withdraw(uint256)";
-        (ok,) = address(mplRewards).call(abi.encodeWithSignature(sig, amt));
+        (ok,) = address(hlsRewards).call(abi.encodeWithSignature(sig, amt));
     }
 
     function try_increaseCustodyAllowance(address pool, address account, uint256 amt) external returns (bool ok) {

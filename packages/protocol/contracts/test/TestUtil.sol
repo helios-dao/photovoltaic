@@ -113,16 +113,16 @@ contract TestUtil is DSTest {
     LoanFactory                    loanFactory;
     PoolFactory                    poolFactory;
     StakeLockerFactory               slFactory;
-    HlsRewardsFactory        mplRewardsFactory;
+    HlsRewardsFactory        hlsRewardsFactory;
 
     /***********************/
     /*** Helios Contracts ***/
     /***********************/
     HeliosGlobals       globals;
-    HeliosToken             mpl;
+    HeliosToken             hls;
     HeliosTreasury     treasury;
     IBPool               bPool;
-    HlsRewards      mplRewards;
+    HlsRewards      hlsRewards;
     IUniswapV2Pair uniswapPair;
 
     /***************/
@@ -264,14 +264,14 @@ contract TestUtil is DSTest {
     /**************************************/
     /*** Helios Contract Setup Functions ***/
     /**************************************/
-    function createHls()      public { mpl      = new HeliosToken("HeliosToken", "MPL", USDC); }
-    function createGlobals()  public { globals  = gov.createGlobals(address(mpl)); }
-    function createTreasury() public { treasury = new HeliosTreasury(address(mpl), USDC, UNISWAP_V2_ROUTER_02, address(globals)); }
+    function createHls()      public { hls      = new HeliosToken("HeliosToken", "HLS", USDC); }
+    function createGlobals()  public { globals  = gov.createGlobals(address(hls)); }
+    function createTreasury() public { treasury = new HeliosTreasury(address(hls), USDC, UNISWAP_V2_ROUTER_02, address(globals)); }
     function createBPool()    public { bPool    = IBPool(IBFactory(BPOOL_FACTORY).newBPool()); }
 
     function setUpHlsRewardsFactory() public {
-        mplRewardsFactory = gov.createHlsRewardsFactory();
-        fakeGov.setGovHlsRewardsFactory(mplRewardsFactory);
+        hlsRewardsFactory = gov.createHlsRewardsFactory();
+        fakeGov.setGovHlsRewardsFactory(hlsRewardsFactory);
     }
 
     function setUpGlobals() public {
@@ -433,16 +433,16 @@ contract TestUtil is DSTest {
     /*************************************/
     /*** Balancer Pool Setup Functions ***/
     /*************************************/
-    function createBalancerPool(uint256 usdcAmount, uint256 mplAmount) public {
+    function createBalancerPool(uint256 usdcAmount, uint256 hlsAmount) public {
         // Mint USDC into this account
         mint("USDC", address(this), usdcAmount);
 
-        // Initialize MPL/USDC Balancer Pool and whitelist
+        // Initialize HLS/USDC Balancer Pool and whitelist
         bPool = IBPool(IBFactory(BPOOL_FACTORY).newBPool());
         usdc.approve(address(bPool), MAX_UINT);
-        mpl.approve(address(bPool),  MAX_UINT);
+        hls.approve(address(bPool),  MAX_UINT);
         bPool.bind(USDC,         usdcAmount, 5 ether);  // Bind USDC with 5 denormalization weight
-        bPool.bind(address(mpl),  mplAmount, 5 ether);  // Bind  MPL with 5 denormalization weight
+        bPool.bind(address(hls),  hlsAmount, 5 ether);  // Bind  HLS with 5 denormalization weight
         bPool.finalize();
         gov.setValidBalancerPool(address(bPool), true);
     }
@@ -509,14 +509,14 @@ contract TestUtil is DSTest {
     /*** Yield Farming Setup Functions ***/
     /*************************************/
     function setUpHlsRewards() public {
-        mplRewards = gov.createHlsRewards(address(mpl), address(pool));
-        fakeGov.setGovHlsRewards(mplRewards);                            // Used to assert failures
+        hlsRewards = gov.createHlsRewards(address(hls), address(pool));
+        fakeGov.setGovHlsRewards(hlsRewards);                            // Used to assert failures
     }
 
     function createFarmers() public {
-        fay = new Farmer(mplRewards, pool);
-        fez = new Farmer(mplRewards, pool);
-        fox = new Farmer(mplRewards, pool);
+        fay = new Farmer(hlsRewards, pool);
+        fez = new Farmer(hlsRewards, pool);
+        fox = new Farmer(hlsRewards, pool);
     }
 
     function setUpFarmers(uint256 amt1, uint256 amt2, uint256 amt3) public {
@@ -654,14 +654,14 @@ contract TestUtil is DSTest {
     /*** Yield Farming Helpers ***/
     /*****************************/
     function setUpFarming(uint256 totalHls, uint256 rewardsDuration) internal {
-        mpl.transfer(address(gov), totalHls);              // Transfer MPL to Governor
-        gov.transfer(mpl, address(mplRewards), totalHls);  // Transfer MPL to HlsRewards
+        hls.transfer(address(gov), totalHls);              // Transfer HLS to Governor
+        gov.transfer(hls, address(hlsRewards), totalHls);  // Transfer HLS to HlsRewards
         gov.setRewardsDuration(rewardsDuration);
         gov.notifyRewardAmount(totalHls);
     }
 
     function stakeIntoFarm(Farmer farmer, uint256 amt) internal{
-        farmer.increaseCustodyAllowance(address(pool), address(mplRewards), amt);
+        farmer.increaseCustodyAllowance(address(pool), address(hlsRewards), amt);
         farmer.stake(amt);
     }
 
@@ -751,17 +751,17 @@ contract TestUtil is DSTest {
         hevm.warp(currentTime + globals.lpCooldownPeriod());
     }
 
-    function setUpUniswapHlsUsdcPool(uint256 mplDesiredAmt, uint256 usdcDesiredAmt) internal {
+    function setUpUniswapHlsUsdcPool(uint256 hlsDesiredAmt, uint256 usdcDesiredAmt) internal {
         // Mint USDC into this account
         mint("USDC", address(this), usdcDesiredAmt);
 
-        // Initialize MPL/USDC Uniswap Pool
-        uniswapPair = IUniswapV2Pair(IUniswapV2Factory(UNISWAP_V2_FACTORY).createPair(address(mpl), address(usdc)));
+        // Initialize HLS/USDC Uniswap Pool
+        uniswapPair = IUniswapV2Pair(IUniswapV2Factory(UNISWAP_V2_FACTORY).createPair(address(hls), address(usdc)));
         usdc.approve(UNISWAP_V2_ROUTER_02, MAX_UINT);
-        mpl.approve(UNISWAP_V2_ROUTER_02,  MAX_UINT);
-        // passing the same value of amountAMin, amountBMin to mplDesiredAmt & usdcDesiredAmt respectively as those
+        hls.approve(UNISWAP_V2_ROUTER_02,  MAX_UINT);
+        // passing the same value of amountAMin, amountBMin to hlsDesiredAmt & usdcDesiredAmt respectively as those
         // values will never gonna be in use for the initial addition of the liquidity.
-        IUniswapV2Router02(UNISWAP_V2_ROUTER_02).addLiquidity(address(mpl), address(usdc), mplDesiredAmt, usdcDesiredAmt, mplDesiredAmt, usdcDesiredAmt, address(gov), now + 10 minutes);
+        IUniswapV2Router02(UNISWAP_V2_ROUTER_02).addLiquidity(address(hls), address(usdc), hlsDesiredAmt, usdcDesiredAmt, hlsDesiredAmt, usdcDesiredAmt, address(gov), now + 10 minutes);
     }
 
     /***********************/

@@ -15,11 +15,11 @@ contract HeliosGlobals {
 
     using SafeMath for uint256;
 
-    address public immutable mpl;         // The ERC-2222 Helios Token for the Helios protocol.
+    address public immutable hls;         // The ERC-2222 Helios Token for the Helios protocol.
 
     address public pendingGovernor;       // The Governor that is declared for governorship transfer. Must be accepted for transfer to take effect.
     address public governor;              // The Governor responsible for management of global Helios variables.
-    address public mapleTreasury;         // The HeliosTreasury is the Treasury where all fees pass through for conversion, prior to distribution.
+    address public heliosTreasury;         // The HeliosTreasury is the Treasury where all fees pass through for conversion, prior to distribution.
     address public globalAdmin;           // The Global Admin of the whole network. Has the power to switch off/on the functionality of entire protocol.
 
     uint256 public defaultGracePeriod;    // Represents the amount of time a Borrower has to make a missed payment before a default can be triggered.
@@ -81,12 +81,12 @@ contract HeliosGlobals {
         @dev   Constructor function.
         @dev   It emits an `Initialized` event.
         @param _governor    Address of Governor.
-        @param _mpl         Address of the ERC-2222 Helios Token for the Helios protocol.
+        @param _hls         Address of the ERC-2222 Helios Token for the Helios protocol.
         @param _globalAdmin Address the Global Admin.
     */
-    constructor(address _governor, address _mpl, address _globalAdmin) public {
+    constructor(address _governor, address _hls, address _globalAdmin) public {
         governor             = _governor;
-        mpl                  = _mpl;
+        hls                  = _hls;
         swapOutRequired      = 10_000;     // $10,000 of Pool cover
         fundingPeriod        = 10 days;
         defaultGracePeriod   = 5 days;
@@ -304,12 +304,12 @@ contract HeliosGlobals {
     /**
         @dev   Sets the HeliosTreasury. Only the Governor can call this function.
         @dev   It emits a `GlobalsParamSet` event.
-        @param _mapleTreasury New HeliosTreasury address.
+        @param _heliosTreasury New HeliosTreasury address.
     */
-    function setHeliosTreasury(address _mapleTreasury) external isGovernor {
-        require(_mapleTreasury != address(0), "MG:ZERO_ADDR");
-        mapleTreasury = _mapleTreasury;
-        emit GlobalsAddressSet("MAPLE_TREASURY", _mapleTreasury);
+    function setHeliosTreasury(address _heliosTreasury) external isGovernor {
+        require(_heliosTreasury != address(0), "MG:ZERO_ADDR");
+        heliosTreasury = _heliosTreasury;
+        emit GlobalsAddressSet("HELIOS_TREASURY", _heliosTreasury);
     }
 
     /**

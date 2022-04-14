@@ -20,13 +20,13 @@ contract LoanFactoryTest is TestUtil {
     function test_setGlobals() public {
         Governor fakeGov = new Governor();
 
-        HeliosGlobals globals2 = fakeGov.createGlobals(address(mpl));  // Create upgraded HeliosGlobals
+        HeliosGlobals globals2 = fakeGov.createGlobals(address(hls));  // Create upgraded HeliosGlobals
 
         assertEq(address(loanFactory.globals()), address(globals));
 
         assertTrue(!fakeGov.try_setGlobals(address(loanFactory), address(globals2)));  // Non-governor cannot set new globals
 
-        globals2 = gov.createGlobals(address(mpl));      // Create upgraded HeliosGlobals
+        globals2 = gov.createGlobals(address(hls));      // Create upgraded HeliosGlobals
 
         assertTrue(gov.try_setGlobals(address(loanFactory), address(globals2)));       // Governor can set new globals
         assertEq(address(loanFactory.globals()), address(globals2));                   // Globals is updated
