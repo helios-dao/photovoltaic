@@ -23,7 +23,8 @@ contract HeliosToken is IHeliosToken, ERC2222 {
     constructor (
         string memory name,
         string memory symbol,
-        address fundsToken
+        address fundsToken,
+        uint256 amount
     ) ERC2222(name, symbol, fundsToken) public {
         uint256 chainId;
         assembly {
@@ -40,7 +41,8 @@ contract HeliosToken is IHeliosToken, ERC2222 {
         );
 
         require(address(fundsToken) != address(0), "HeliosToken:INVALID_FUNDS_TOKEN");
-        _mint(msg.sender, 10_000_000 * 10 ** 18);
+        require(amount >= 0, "HeliosToken:INVALID_MINT_AMNT");
+        _mint(msg.sender, amount * 10 ** 18);
     }
 
     /**

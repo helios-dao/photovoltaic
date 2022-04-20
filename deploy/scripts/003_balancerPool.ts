@@ -19,11 +19,11 @@ module.exports = async ({
   console.log(`Created BPool at ${bPoolAddress}`);
 
   console.log('Bind USD')
-  const usdcAmount = hre.ethers.BigNumber.from('1500000000000');
+  const usdcAmount = hre.ethers.BigNumber.from('1000000');  // USDC has 6 decimals
   await usdcToken.approve(bPool.address, usdcAmount);
   await bPool.bind(usdcToken.address, usdcAmount, hre.ethers.BigNumber.from('5000000000000000000'));
   console.log('Bind HLS')
-  const hlsAmount = hre.ethers.BigNumber.from('75000000000000000000000');
+  const hlsAmount = hre.ethers.BigNumber.from('1000000000000000000');  // HLS has 18 decimals
   await heliosToken.approve(bPool.address, hlsAmount);
   await bPool.bind(heliosGlobals.hls(), hlsAmount, hre.ethers.BigNumber.from('5000000000000000000'));
   console.log('Finalize')

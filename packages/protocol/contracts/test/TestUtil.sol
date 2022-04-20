@@ -264,7 +264,7 @@ contract TestUtil is DSTest {
     /**************************************/
     /*** Helios Contract Setup Functions ***/
     /**************************************/
-    function createHls()      public { hls      = new HeliosToken("HeliosToken", "HLS", USDC); }
+    function createHls()      public { hls      = new HeliosToken("HeliosToken", "HLS", USDC, 10_000_000); }
     function createGlobals()  public { globals  = gov.createGlobals(address(hls)); }
     function createTreasury() public { treasury = new HeliosTreasury(address(hls), USDC, UNISWAP_V2_ROUTER_02, address(globals)); }
     function createBPool()    public { bPool    = IBPool(IBFactory(BPOOL_FACTORY).newBPool()); }

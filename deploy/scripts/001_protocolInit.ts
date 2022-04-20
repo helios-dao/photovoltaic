@@ -39,6 +39,7 @@ module.exports = async ({
   const PREMIUM_FEE = 0;
   const TOKEN_NAME = 'Helios Token';  // token name
   const TOKEN_SYMBOL = 'HLS';  // token symbol
+  const TOKEN_AMOUNT = 1;   // amount to mint
   const UNISWAP_ROUTER = process.env.UNISWAP_ROUTER;  // uniswap router contract
   const usdToken = await getUSDCAddress();  // USD token contract
   const WBTC_TOKEN = process.env.WBTC_TOKEN;  // WBTC token contract
@@ -46,7 +47,7 @@ module.exports = async ({
   const CONTRACTS = [
     {
       name: 'HeliosToken',
-      args: [TOKEN_NAME, TOKEN_SYMBOL, usdToken]
+      args: [TOKEN_NAME, TOKEN_SYMBOL, usdToken, TOKEN_AMOUNT]
     },
     {
       name: 'HeliosGlobals',
