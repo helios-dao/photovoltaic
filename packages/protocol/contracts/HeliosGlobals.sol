@@ -87,7 +87,7 @@ contract HeliosGlobals {
     constructor(address _governor, address _hls, address _globalAdmin) public {
         governor             = _governor;
         hls                  = _hls;
-        swapOutRequired      = 10_000;     // $10,000 of Pool cover
+        swapOutRequired      = 0;          // $0 of Pool cover; was $10,000
         fundingPeriod        = 10 days;
         defaultGracePeriod   = 5 days;
         investorFee          = 50;         // 0.5 %

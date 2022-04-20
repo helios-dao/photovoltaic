@@ -1,4 +1,8 @@
+const { getUSDCAddress } = require('./../helpers/helpers.ts');
+
+// Deploys all the contracts.
 module.exports = async ({
+  getChainId,
   getNamedAccounts,
   deployments
 }) => {
@@ -23,19 +27,26 @@ module.exports = async ({
     console.log(`Deployed ${name} at ${contract.address}`);
   };
 
+  // Locally, we want to deploy a fake USDC contract so we can easily mint tokens for
+  // ourselves.
+  const chainId = await getChainId();
+  if (chainId == 1337) {
+    await deployContract({ name: 'FakeUSDC', args: [hre.ethers.utils.parseEther("1000000.0").toString()] })
+  }
+
   const CHAINLINK_USD_WBTC_AGGREGATOR = process.env.CHAINLINK_USD_WBTC_AGGREGATOR;  // chainlink USD-WBTC contract
   const LATE_FEE = 0;
   const PREMIUM_FEE = 0;
   const TOKEN_NAME = 'Helios Token';  // token name
   const TOKEN_SYMBOL = 'HLS';  // token symbol
   const UNISWAP_ROUTER = process.env.UNISWAP_ROUTER;  // uniswap router contract
-  const USD_TOKEN = process.env.USD_TOKEN;  // USD token contract
+  const usdToken = await getUSDCAddress();  // USD token contract
   const WBTC_TOKEN = process.env.WBTC_TOKEN;  // WBTC token contract
 
   const CONTRACTS = [
     {
       name: 'HeliosToken',
-      args: [TOKEN_NAME, TOKEN_SYMBOL, USD_TOKEN]
+      args: [TOKEN_NAME, TOKEN_SYMBOL, usdToken]
     },
     {
       name: 'HeliosGlobals',
@@ -89,7 +100,7 @@ module.exports = async ({
     },
     {
       name: 'HeliosTreasury',
-      args: ['HeliosToken', USD_TOKEN, UNISWAP_ROUTER, 'HeliosGlobals'],
+      args: ['HeliosToken', usdToken, UNISWAP_ROUTER, 'HeliosGlobals'],
       libs: ['Util']
     },
     {

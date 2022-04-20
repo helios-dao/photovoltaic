@@ -6,17 +6,24 @@
 require('dotenv-flow').config();
 require('hardhat-deploy');
 require("@nomiclabs/hardhat-ethers");
-require('hardhat-contract-sizer');
+// require('hardhat-contract-sizer');
 
 module.exports = {
   solidity: {
-    version: "0.6.11",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200
-      }
-    },
+    compilers: [
+      {
+        version: "0.5.12"
+      },
+      {
+        version: "0.6.11",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        },
+      },
+    ]
   },
   contractSizer: {
     except: [
@@ -39,16 +46,20 @@ module.exports = {
           sleep: true
         }
       },
-      url: "https://eth-rinkeby.alchemyapi.io/v2/KE1qQBCNVse9h7NAa_re7cfQWtaZy1ix"
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`
     },
     hardhat: {
       chainId: 1337,
-      allowUnlimitedContractSize: true
+      allowUnlimitedContractSize: true,
+      forking: {
+        enabled: true,
+        url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`
+      },
     }
   },
   paths: {
     sources: "./packages/protocol/contracts",
-    deploy: "./deploy"
+    deploy: "./deploy/scripts"
   },
   namedAccounts: {
     deployer: {
