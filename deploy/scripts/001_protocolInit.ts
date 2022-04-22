@@ -1,4 +1,4 @@
-const { getUSDCAddress } = require('./../helpers/helpers.ts');
+const { getContractAddress } = require('./../helpers/helpers.ts');
 
 // Deploys all the contracts.
 module.exports = async ({
@@ -21,7 +21,7 @@ module.exports = async ({
     const contract = await deploy(name, {
       from: deployer,
       args,
-      libraries,
+      libraries
     });
     deployedContracts[name] = contract.address;
     console.log(`Deployed ${name} at ${contract.address}`);
@@ -41,13 +41,13 @@ module.exports = async ({
   const TOKEN_SYMBOL = 'HLS';  // token symbol
   const TOKEN_AMOUNT = 1;   // amount to mint
   const UNISWAP_ROUTER = process.env.UNISWAP_ROUTER;  // uniswap router contract
-  const usdToken = await getUSDCAddress();  // USD token contract
-  const WBTC_TOKEN = process.env.WBTC_TOKEN;  // WBTC token contract
+  const usdcAddress = await getContractAddress('USDC', chainId);  // USD token contract
+  const wbtcAddress = await getContractAddress('WBTC', chainId);  // WBTC token contract
 
   const CONTRACTS = [
     {
       name: 'HeliosToken',
-      args: [TOKEN_NAME, TOKEN_SYMBOL, usdToken, TOKEN_AMOUNT]
+      args: [TOKEN_NAME, TOKEN_SYMBOL, usdcAddress, TOKEN_AMOUNT]
     },
     {
       name: 'HeliosGlobals',
@@ -97,11 +97,11 @@ module.exports = async ({
     },
     {
       name: 'ChainlinkOracle',
-      args: [CHAINLINK_USD_WBTC_AGGREGATOR, WBTC_TOKEN, oracleOwner]
+      args: [CHAINLINK_USD_WBTC_AGGREGATOR, wbtcAddress, oracleOwner]
     },
     {
       name: 'HeliosTreasury',
-      args: ['HeliosToken', usdToken, UNISWAP_ROUTER, 'HeliosGlobals'],
+      args: ['HeliosToken', usdcAddress, UNISWAP_ROUTER, 'HeliosGlobals'],
       libs: ['Util']
     },
     {

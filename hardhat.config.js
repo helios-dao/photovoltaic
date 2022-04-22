@@ -36,7 +36,21 @@ module.exports = {
     runOnCompile: true
   },
   networks: {
+    mumbai: {
+      chainId: 80001,
+      accounts: [process.env.DEPLOYER_PRIVATE_KEY],
+      verify: {
+        etherscan: {
+          apiUrl: "https://api-testnet.polygonscan.com",
+          license: "AGPL-3.0",
+          forceLicense: true,
+          sleep: true
+        }
+      },
+      url: process.env.ALCHEMY_MUMBAI_URL
+    },
     rinkeby: {
+      chainId: 4,
       accounts: [process.env.DEPLOYER_PRIVATE_KEY],
       verify: {
         etherscan: {
@@ -46,14 +60,14 @@ module.exports = {
           sleep: true
         }
       },
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`
+      url: process.env.ALCHEMY_RINKEBY_URL
     },
     hardhat: {
       chainId: 1337,
       allowUnlimitedContractSize: true,
       forking: {
         enabled: true,
-        url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`
+        url: process.env.ALCHEMY_RINKEBY_URL
       },
     }
   },

@@ -32,31 +32,29 @@ undefined
 > const box = await Box.attach('0x5FbDB2315678afecb367f032d93F642f64180aa3')
 undefined
 
-## Deploying to Rinkeby
+## Deploying to Rinkeby (Ethereum testnet) or Mumbai (Polygon testnet)
 
 Create an `.env` file in the root directory and add the following:
 
 ```
 CHAINLINK_USD_WBTC_AGGREGATOR=0xECe365B379E1dD183B20fc5f022230C044d51404
 UNISWAP_ROUTER=0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
-USD_TOKEN=0x553D0a8807f8E325671Ce953a4D00883CCE1ee56
-WBTC_TOKEN=0xBa711fCa79c559EC8D98c39a81876105A6C0cefa
 WBTC_ORACLE_OWNER=
 PROTOCOL_GOVERNOR=
 PROTOCOL_GLOBAL_ADMIN=
 DEPLOYER_ADDRESS=
 DEPLOYER_PRIVATE_KEY=
-ALCHEMY_KEY=
+ALCHEMY_RINKEBY_URL=
+ALCHEMY_MUMBAI_URL=
 DEFAULT_POOL_DELEGATE=
-BPOOL_FACTORY=0x9C84391B443ea3a48788079a5f98e2EaD55c9309
 ```
 
 `WBTC_ORACLE_OWNER`, `WBTC_ORACLE_OWNER`, `PROTOCOL_GOVERNOR`, `PROTOCOL_GLOBAL_ADMIN` and `DEFAULT_POOL_DELEGATE` should be your own MetaMask wallet address, and `DEPLOYER_PRIVATE_KEY` should be its private key. Alternatively (and this is what we'll need to do on Mainnet) go to [https://gnosis-safe.io](https://gnosis-safe.io) and create a safe for each of those.
 
-Get an account on Alchemy, create a node on Rinkeby, and set `ALCHEMY_KEY` to the API key.
+Get an account on Alchemy, create a node on Rinkeby or Mumbai, and set `ALCHEMY_RINKEBY_URL` or `ALCHEMY_MUMBAI_URL` to the URL.
 
 Then run: <br>
-``` yarn hardhat deploy --network rinkeby ```
+``` yarn hardhat deploy --network rinkeby ``` or ``` yarn hardhat deploy --network mumbai ```
 
 ## Verifying the source code on Etherscan
 
