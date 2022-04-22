@@ -39,7 +39,7 @@ module.exports = async ({
   const usdcAddress = await getContractAddress('USDC', chainId);
   const usdcToken = await hre.ethers.getContractAt('FakeUSDC', usdcAddress);  // Real USDC and FakeUSDC have same ABI.
 
-  const TX = { gasLimit: 100000 };
+  const TX = { gasLimit: 300000 };
 
   const bPoolWait = await (await bPoolFactory.newBPool()).wait();
   bPoolAddress = bPoolWait.logs[1].address;

@@ -9,7 +9,7 @@ const getMeta = (contractName) => {
 
 const CONTRACTS = {
   'BPool': {
-    80001: '0x5caC282C729328cDa7751af08755950E9Ae09502'
+    80001: '0x306B91Bb278698F0552AD67805076711f162CCA4'
   },
   'BPoolFactory': {
     4: '0x9C84391B443ea3a48788079a5f98e2EaD55c9309',
