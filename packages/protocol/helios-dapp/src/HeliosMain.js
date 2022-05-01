@@ -1,9 +1,13 @@
 import detectEthereumProvider from '@metamask/detect-provider';
+import { getContractAddress } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
 import React, {useState} from 'react'
 
 const HeliosMain = ()  => {
+
+    // change contract address here for each contract
+    const contractAddress = "";
     const ethereumProvider = async () => {
         await detectEthereumProvider()
     };
@@ -42,10 +46,20 @@ const HeliosMain = ()  => {
     }
 
     const updateEthers = () => {
-        const alchemyMumbaiUrl = (apiKey) => `https://polygon-mumbai.g.alchemy.com/v2/${apiKey}`
         // provider is abstraction of a connection to Ethereum Network
-        let tempProvider = new ethers.providers.JsonRpcProvider()
+        // read-only provider for metamask
+        let tempProvider = new ethers.providers.Web3Provider(winodw.ethereum);
+        setProvider(tempProvider);
+
+        // gives read + write access
+        // allows us to perform functions on the contract
+        let tempSigner = tempProvider.getSigner();
+        setSigner(tempSigner);
+
+        let tempContract = new ethers.Contract(contractAddress, Contract_abi, tempSigner);
+        setContract(tempContract);
     }
+
 
     return (
         <div> 

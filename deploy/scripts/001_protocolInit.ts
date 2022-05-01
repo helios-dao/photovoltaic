@@ -17,6 +17,8 @@ module.exports = async ({
   let deployedContracts = {};
 
   const deployContract = async ({ name, args = [], libraries = {}}) => {
+    console.log("Deploying contracts with the account:", deployer.address);
+
     console.log(`Deploying ${name}...`, 'args: ', args, 'libraries: ', libraries);
     const contract = await deploy(name, {
       from: deployer,

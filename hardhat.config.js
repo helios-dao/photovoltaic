@@ -67,7 +67,7 @@ module.exports = {
       allowUnlimitedContractSize: true,
       forking: {
         enabled: true,
-        url: process.env.ALCHEMY_RINKEBY_URL
+        url: process.env.ALCHEMY_MUMBAI_URL
       },
     }
   },

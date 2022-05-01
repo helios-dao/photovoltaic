@@ -53,6 +53,11 @@ DEFAULT_POOL_DELEGATE=
 
 Get an account on Alchemy, create a node on Rinkeby or Mumbai, and set `ALCHEMY_RINKEBY_URL` or `ALCHEMY_MUMBAI_URL` to the URL.
 
+If you need to add Mumbai or Polygon Mainnet to your metamask, the easiest way to get it done is by searching “MATIC” on Chainlist and clicking “Add To Metamask” on “Matic (Polygon) Testnet Mumbai”, and you are good to go.
+
+If you need tokens for gas fees, go to a faucet and request tokens.
+Polygon: https://faucet.polygon.technology/
+
 Then run: <br>
 ``` yarn hardhat deploy --network rinkeby ``` or ``` yarn hardhat deploy --network mumbai ```
 
@@ -70,3 +75,13 @@ The deploy scripts are currently tested locally only. They will fork Rinkeby, de
 3. `createLoan(poolAddress, amount)` (same as above)
 
 If all this works, you've created + funded a pool, and created + funded a loan from said pool!
+
+# Debugging
+
+Error
+If you see the following:
+``` 
+reason: 'insufficient funds for intrinsic transaction cost',
+  code: 'INSUFFICIENT_FUNDS',
+  error: ProviderError: insufficient funds for gas * price + value
+```
