@@ -1,13 +1,16 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { getContractAddress } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
+import { abi } from './HeliosGlobals.json';
+import React, {useState} from 'react';
 
-import React, {useState} from 'react'
 
 const HeliosMain = ()  => {
 
     // change contract address here for each contract
-    const contractAddress = "";
+    const contractAddress = '0xA744263c6f294db52c4b3b416BA5c1800f66BDBa';
+
+    const Contract_abi = abi
+
     const ethereumProvider = async () => {
         await detectEthereumProvider()
     };
@@ -48,7 +51,7 @@ const HeliosMain = ()  => {
     const updateEthers = () => {
         // provider is abstraction of a connection to Ethereum Network
         // read-only provider for metamask
-        let tempProvider = new ethers.providers.Web3Provider(winodw.ethereum);
+        let tempProvider = new ethers.providers.Web3Provider(window.ethereum);
         setProvider(tempProvider);
 
         // gives read + write access
@@ -60,6 +63,11 @@ const HeliosMain = ()  => {
         setContract(tempContract);
     }
 
+    const getCurrentVal = async () => {
+        let val = await contract.get();
+        setCurrentContractVal(val);
+
+    }
 
     return (
         <div> 
@@ -68,8 +76,12 @@ const HeliosMain = ()  => {
                 <a href='https://helios.eco'>Helios.eco</a> 
            </h4>
            <h3>Interact with the protocol below:</h3>
-           <button onClick={connectWalletHandler}> {"Connect your Wallet"}</button>
+           <button onClick={connectWalletHandler}> Connect your Wallet </button>
            <h3> Wallet Address: {defaultAccount} </h3>
+
+           <button onClick={getCurrentVal}> Get Current Val </button>
+           {currentContractVal}
+           {errorMessage}
         </div>
     )
 }
