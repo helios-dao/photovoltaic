@@ -1,5 +1,5 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { ethers } from 'hardhat';
+import { ethers } from 'ethers';
 import { abi } from './HeliosGlobals.json';
 import React, {useState} from 'react';
 
