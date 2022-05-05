@@ -1,14 +1,15 @@
-const { getUSDCAddress } = require('./helpers.ts');
+const { getContractAddress } = require('./helpers.ts');
 
 const CHAIN_ID = 80001;
-const usdcAddress = getContractAddress('USDC', CHAIN_ID);
 
 const createPool = async (bPoolAddress) => {
+  const usdcAddress = await getContractAddress('USDC', CHAIN_ID);
   const slFactory = await hre.ethers.getContract('StakeLockerFactory');
   const llFactory = await hre.ethers.getContract('LiquidityLockerFactory');
   const poolFactory = await hre.ethers.getContract('PoolFactory');
   const index = await poolFactory.poolsCreated()
-  await poolFactory.createPool(usdcAddress, bPoolAddress, slFactory.address, llFactory.address, 0, 0, 10 ** 13);
+  const tx = await poolFactory.createPool(usdcAddress, bPoolAddress, slFactory.address, llFactory.address, 0, 0, 10 ** 13);
+  await tx.await();
   const poolAddress = await poolFactory.pools(index);
   console.log(`Pool created at ${poolAddress}.`);
   const pool = await hre.ethers.getContractAt('Pool', poolAddress);
@@ -18,6 +19,7 @@ const createPool = async (bPoolAddress) => {
 };
 
 const deposit = async (poolAddress, amount) => {
+  const usdcAddress = await getContractAddress('USDC', CHAIN_ID);
   const pool = await hre.ethers.getContractAt('Pool', poolAddress);
   const usdcToken = await hre.ethers.getContractAt('FakeUSDC', usdcAddress);
   await usdcToken.approve(pool.address, amount);
@@ -27,6 +29,7 @@ const deposit = async (poolAddress, amount) => {
 };
 
 const createLoan = async (poolAddress, amount) => {
+  const usdcAddress = await getContractAddress('USDC', CHAIN_ID);
   const flFactory = await hre.ethers.getContract('FundingLockerFactory');
   const clFactory = await hre.ethers.getContract('CollateralLockerFactory');
   const loanFactory = await hre.ethers.getContract('LoanFactory');
