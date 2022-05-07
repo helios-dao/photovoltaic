@@ -18,9 +18,9 @@ export const FetchExample = () => {
   // similar to componentDidMount()
   useEffect(() => {
     fetch(API_URL)
-      .then((res) => {
+      .then(async (res) => {
         console.log("res: ", res);
-        return res.json();
+        return await res.json();
       })
       .then(
         (result) => {

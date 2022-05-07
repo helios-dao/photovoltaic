@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import Web3Modal from "web3modal";
-import WalletConnect from "@walletconnect/web3-provider";
-import { getProviderName } from "@components/WalletWrapper";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import WalletConnect from "@walletconnect/web3-provider";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { SUPPORTED_NETWORKS } from "src/constants";
+import Web3Modal from "web3modal";
 
 export const providerOptions = {
   walletconnect: {
@@ -28,31 +28,21 @@ export const WalletProvider = ({ children }) => {
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
-  const [providerName, setProviderName] = useState(null);
-
-  const fetchProviderName = async () => {
-    const name = await getProviderName(provider);
-    setProviderName(name);
-  };
+  const [network, setNetwork] = useState(null);
+  const [library, setLibrary] = useState(null);
 
   const connect = useCallback(async function () {
-    // This is the initial `provider` that is returned when
-    // using web3Modal to connect. Can be Wallet or WalletConnect.
-    const instance = await web3Modal.connect();
-
-    // We plug the initial `provider` into ethers.js and get back
-    // a Web3Provider. This will add on methods from ethers.js and
-    // event listeners such as `.on()` will be different.
-    const provider = new Web3Provider(instance);
-
-    const signer = provider.getSigner();
+    const provider = await web3Modal.connect();
+    const library = new Web3Provider(provider);
+    const signer = library.getSigner();
     const address = await signer.getAddress();
+    const network = await library.getNetwork();
 
-    const network = await provider.getNetwork();
-
+    setLibrary(library);
     setProvider(provider);
     setSigner(signer);
     setAccount(address);
+    setNetwork(network);
   }, []);
 
   const disconnect = useCallback(
@@ -64,7 +54,7 @@ export const WalletProvider = ({ children }) => {
       setAccount(null);
       setProvider(null);
       setSigner(null);
-      setProviderName(null);
+      setLibrary(null);
     },
     [provider],
   );
@@ -76,28 +66,17 @@ export const WalletProvider = ({ children }) => {
   }, [connect]);
 
   useEffect(() => {
-    fetchProviderName();
-  }, [provider]);
-
-  // A `provider` should come with EIP-1193 events. We'll listen for those events
-  // here so that when a user switches accounts or networks, we can update the
-  // local React state with that new information.
-  useEffect(() => {
     if (provider?.on) {
       const handleAccountsChanged = (accounts: string[]) => {
-        // eslint-disable-next-line no-console
-        console.log("accountsChanged", accounts);
         setAccount(accounts[0]);
       };
 
       // https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes
       const handleChainChanged = (_hexChainId: string) => {
-        console.log("chain changed");
         window.location.reload();
       };
 
       const handleDisconnect = (error: { code: number; message: string }) => {
-        // eslint-disable-next-line no-console
         console.log("disconnect", error);
         disconnect();
       };
@@ -117,20 +96,11 @@ export const WalletProvider = ({ children }) => {
     }
   }, [provider, disconnect]);
 
-  //   const switchNetwork = async () => {
-  //   try {
-  //     await ethers.provider.request({
-  //       method: "wallet_switchEthereumChain",
-  //       params: [{ chainId: toHex(network) }]
-  //     });
-  //   } catch (switchError) {
-
-  //         setError(error);
-  //     }
-  //   }
-  // };
-
   const isConnected = !!account;
+
+  const isSupportedNetwork =
+    network?.chainId &&
+    Object.keys(SUPPORTED_NETWORKS).includes(network.chainId.toString());
 
   const readProvider = new JsonRpcProvider(
     "https://polygon-mumbai.g.alchemy.com/v2/p0sNpOZvi2r51gDRPZjQkBdIcsk8xbZB",
@@ -139,15 +109,16 @@ export const WalletProvider = ({ children }) => {
   const values = useMemo(
     () => ({
       account,
-      provider,
-      signer,
-      isConnected,
       connect,
-      providerName,
-      readProvider,
       disconnect,
+      isConnected,
+      isSupportedNetwork,
+      network,
+      provider: library,
+      readProvider,
+      signer,
     }),
-    [provider, signer, isConnected, account, providerName],
+    [signer, account, network, provider],
   );
 
   return (

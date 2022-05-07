@@ -2,6 +2,14 @@ import { getAddress } from "@ethersproject/address";
 import { AddressZero } from "@ethersproject/constants";
 import { Contract } from "@ethersproject/contracts";
 import { JsonRpcSigner } from "@ethersproject/providers";
+import { SUPPORTED_NETWORKS } from "src/constants";
+
+const UNKNOWN_NETWORK = "Unknown network";
+
+export const getNetworkName = (network) => {
+  const chainId = network?.chainId?.toString();
+  return SUPPORTED_NETWORKS[chainId] || UNKNOWN_NETWORK;
+};
 
 export function isAddress(value: any): string | false {
   try {

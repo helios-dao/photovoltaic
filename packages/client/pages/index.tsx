@@ -1,36 +1,60 @@
-import { Container, Header, Main, Footer, Cards } from "@components";
+import { CardsList, Card } from "@components";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { POOLS } from "src/constants";
 import useWallet from "src/hooks/useWallet";
+import { Pool__factory } from "src/types/ethers-contracts";
+import { shortenAddress } from "src/utils";
+import formatUsdc from "src/utils/formatUsdc";
+
+const Dashboard: React.FC = ({}) => {
+  const { account, provider } = useWallet();
+  const [amount, setAmount] = useState(null);
+  let contract;
+
+  useEffect(() => {
+    getAmount();
+  }, [account]);
+
+  const getAmount = async () => {
+    if (!account) return;
+
+    let amount = 0;
+    let pool;
+    for (let i = 0; i < POOLS.length; i++) {
+      pool = POOLS[i];
+      if (!contract) {
+        contract = Pool__factory.connect(pool.address, provider);
+      } else {
+        contract = contract.attach(pool.address);
+      }
+      amount = amount + (await contract.balanceOf(account));
+    }
+    setAmount(formatUsdc(amount.toString()));
+  };
+
+  return <div>Total invested: ${amount || "???"}</div>;
+};
 
 const Home: React.FC = () => {
-  const { account, providerName, disconnect, isConnected, connect } =
-    useWallet();
+  const { isConnected } = useWallet();
 
   return (
-    <Container>
-      <header>
-        {isConnected ? (
-          <>
-            <div>
-              Connected as {account} to {providerName}
-            </div>
-            <div>
-              <button onClick={disconnect}>Disconnect</button>
-            </div>
-          </>
-        ) : (
-          <button onClick={connect}>connect metamask</button>
-        )}
-      </header>
-      <main>
+    <>
+      {isConnected && <Dashboard />}
+      <CardsList>
         {POOLS.map((pool) => (
           <Link href={`/pools/${pool.address}`} key={pool.address}>
-            <a>{pool.name}</a>
+            <a>
+              <Card
+                name={pool.name}
+                description={shortenAddress(pool.address)}
+              />
+            </a>
           </Link>
         ))}
-      </main>
-    </Container>
+      </CardsList>
+    </>
   );
 };
 

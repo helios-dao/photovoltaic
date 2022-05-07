@@ -1,12 +1,14 @@
+import { Button } from "@components/button";
+import abi from "contracts";
 import { useState } from "react";
 import { USDC_ADDRESS } from "src/constants";
 import useContract from "src/hooks/useContract";
-import abi from "contracts";
 import parseUsdc from "src/utils/parseUsdc";
 
 const InvestForm = ({ pool }) => {
   const [status, setStatus] = useState({});
   const [amount, setAmount] = useState(undefined);
+  const [errorMsg, setError] = useState("");
   const poolContract = useContract(pool.address, abi.pool);
   const usdcToken = useContract(USDC_ADDRESS, abi.usdc);
 
@@ -22,8 +24,26 @@ const InvestForm = ({ pool }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!poolContract || !usdcToken) return;
-    if (!amount || amount < 0) return;
+    setError("");
+    setStatus({
+      ...status,
+      hasApproved: false,
+      hasDeposited: false,
+      hasInvested: false,
+      isApproving: false,
+      isDepositing: false,
+      isError: false,
+      isInvesting: false,
+    });
+
+    if (poolContract == null || usdcToken == null) {
+      setError("Contracts are not initialized");
+      return;
+    }
+    if (!amount || amount < 0) {
+      setError("Amount has to be positive");
+      return;
+    }
 
     setStatus({
       ...status,
@@ -53,22 +73,17 @@ const InvestForm = ({ pool }) => {
     } catch (error) {
       setStatus({
         ...status,
-        hasApproved: false,
-        hasDeposited: false,
-        hasInvested: false,
-        isApproving: false,
-        isDepositing: false,
         isError: true,
-        isInvesting: false,
       });
+      setError(error.reason);
     }
   };
 
-  const isReady = !!poolContract && !!usdcToken;
+  const isReady = poolContract !== null && usdcToken !== null;
 
   if (hasInvested) return <div>Your investment is complete</div>;
 
-  if (isInvesting)
+  if (isInvesting) {
     return (
       <div>
         <div>
@@ -89,6 +104,7 @@ const InvestForm = ({ pool }) => {
         </div>
       </div>
     );
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -99,12 +115,11 @@ const InvestForm = ({ pool }) => {
         defaultValue={amount}
       />
       {isError ? (
-        <div>
-          An error happened <button disabled={!isReady}>Retry</button>
-        </div>
+        <Button disabled={!isReady}>Retry</Button>
       ) : (
-        <button disabled={!isReady}>Invest</button>
+        <Button disabled={!isReady}>Invest</Button>
       )}
+      {errorMsg !== "" && <div>Error: {errorMsg}</div>}
     </form>
   );
 };

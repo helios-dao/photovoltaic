@@ -1,25 +1,28 @@
+import useWallet from "./useWallet";
 import { Contract } from "@ethersproject/contracts";
 import { useMemo } from "react";
 import { getContract } from "src/utils";
-import useWallet from "./useWallet";
 
 export default function useContract<T extends Contract = Contract>(
   address: string,
   ABI: any,
 ): T | null {
-  const { signer } = useWallet();
+  const { isSupportedNetwork, readProvider, signer } = useWallet();
+  const signerOrProvider = isSupportedNetwork
+    ? signer || readProvider
+    : readProvider;
 
   return useMemo(() => {
-    if (!address || !ABI || !signer) {
+    if (!address || !ABI || !signerOrProvider) {
       return null;
     }
 
     try {
-      return getContract(address, ABI, signer);
+      return getContract(address, ABI, signerOrProvider);
     } catch (error) {
       console.error("Failed To Get Contract", error);
 
       return null;
     }
-  }, [address, ABI, signer]) as T;
+  }, [address, ABI, signerOrProvider]) as T;
 }

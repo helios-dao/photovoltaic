@@ -1,13 +1,13 @@
-import { POOLS, USDC_ADDRESS } from "src/constants";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import abi from "contracts";
-import formatUsdc from "src/utils/formatUsdc";
-import InvestForm from "@components/pools/InvestForm";
-import Link from "next/link";
-import useContract from "src/hooks/useContract";
-import UserParticipation from "@components/pools/UserParticipation";
 import WalletWrapper from "@components/WalletWrapper";
+import InvestForm from "@components/pools/InvestForm";
+import UserParticipation from "@components/pools/UserParticipation";
+import abi from "contracts";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { POOLS, USDC_ADDRESS } from "src/constants";
+import useContract from "src/hooks/useContract";
+import formatUsdc from "src/utils/formatUsdc";
 
 export default function PoolPage() {
   const router = useRouter();
@@ -16,11 +16,6 @@ export default function PoolPage() {
   const [isLoading, setIsLoading] = useState(true);
   const poolContract = useContract(params.address, abi.pool);
   const usdcToken = useContract(USDC_ADDRESS, abi.usdc);
-
-  useEffect(() => {
-    const pool = POOLS.find((pool) => params.address === pool.address);
-    setPool(pool);
-  }, []);
 
   useEffect(() => {
     if (pool !== null) setIsLoading(false);
@@ -33,6 +28,9 @@ export default function PoolPage() {
   const fetchPool = async () => {
     if (!poolContract || !usdcToken) return;
 
+    const pool = POOLS.find((pool) => params.address === pool.address);
+    if (!pool) return;
+
     const totalParticipation = await usdcToken.balanceOf(
       await poolContract.liquidityLocker(),
     );
@@ -42,7 +40,7 @@ export default function PoolPage() {
     });
   };
 
-  if (isLoading) return <div></div>;
+  if (isLoading) return <div />;
 
   if (!pool) return <div>Could not find pool</div>;
 
