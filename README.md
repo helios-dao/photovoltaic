@@ -65,16 +65,16 @@ To alter number of fuzz runs, change the `--fuzz-runs` flag in `test.sh`. Note: 
 | LoanLib                 | [0xb143899EAcd22C1A744DdeeffCF0D5fa72274638](https://mumbai.polygonscan.com/address/0xb143899EAcd22C1A744DdeeffCF0D5fa72274638) |
 | HeliosTreasury           | [0xF3f7Aaad3586d25089DaaC28b0493c2857e010a9](https://mumbai.polygonscan.com/address/0xF3f7Aaad3586d25089DaaC28b0493c2857e010a9) |
 | RepaymentCalc           | [0xFD025e44ECE1D3099a869a27780135b00998F39b](https://mumbai.polygonscan.com/address/0xFD025e44ECE1D3099a869a27780135b00998F39b) |
-| LateFeeCalc             | [0x021344E135Fa870b7BEdeE3f61ac745c9a4c5211](https://mumbai.polyygonscan.io/address/0x021344E135Fa870b7BEdeE3f61ac745c9a4c5211) |
-| PremiumCalc             | [0x62E8311266bcaC3603b1c2d0528E0c86Ea127076](https://mumbai.polygonscan.io/address/0x62E8311266bcaC3603b1c2d0528E0c86Ea127076) |
-| PoolFactory             | [0xE7E4320c9b36cC3E0CD2b6Cac56A4ca10A7A89DE](https://mumbai.polygonscan.io/address/0xE7E4320c9b36cC3E0CD2b6Cac56A4ca10A7A89DE) |
-| StakeLockerFactory      | [0x85322f42ED83C64C4c41937Ae485733EB6896c06](https://mumbai.polygonscan.io/address/0x85322f42ED83C64C4c41937Ae485733EB6896c06) |
+| LateFeeCalc             | [0x021344E135Fa870b7BEdeE3f61ac745c9a4c5211](https://mumbai.polyygonscan.com/address/0x021344E135Fa870b7BEdeE3f61ac745c9a4c5211) |
+| PremiumCalc             | [0x62E8311266bcaC3603b1c2d0528E0c86Ea127076](https://mumbai.polygonscan.com/address/0x62E8311266bcaC3603b1c2d0528E0c86Ea127076) |
+| PoolFactory             | [0xE7E4320c9b36cC3E0CD2b6Cac56A4ca10A7A89DE](https://mumbai.polygonscan.com/address/0xE7E4320c9b36cC3E0CD2b6Cac56A4ca10A7A89DE) |
+| StakeLockerFactory      | [0x85322f42ED83C64C4c41937Ae485733EB6896c06](https://mumbai.polygonscan.com/address/0x85322f42ED83C64C4c41937Ae485733EB6896c06) |
 | LiquidityLockerFactory  | [0xa387a75585440791ddf23b58cF9E77a2918284D8](https://mumbai.polygonscan.io/address/0xa387a75585440791ddf23b58cF9E77a2918284D8) |
-| DebtLockerFactory       | [0x0be0121bcE7A08C9A4260a49ff7747944994f4C6](https://mumbai.polygonscan.io/address/0x0be0121bcE7A08C9A4260a49ff7747944994f4C6) |
-| LoanFactory             | [0x1e79Dc2aae758ad8dea0FbFeA2e38178518e859E](https://mumbai.polygonscan.io/address/0x1e79Dc2aae758ad8dea0FbFeA2e38178518e859E) |
-| CollateralLockerFactory | [0xaC0F8d4C0b94584335A6D250A2768f45D1Ea7A61](https://mumbai.polygonscan.io/address/0xaC0F8d4C0b94584335A6D250A2768f45D1Ea7A61) |
-| FundingLockerFactory    | [0x3f11b2d7958Dd5F1797A9CaAeBE6A315a4475350](https://mumbai.polygonscan.io/address/0x3f11b2d7958Dd5F1797A9CaAeBE6A315a4475350) |
-| HlsRewardsFactory       | [0xe52eef7bD31dB7d6fEfB6985d6A8aC6872519f69](https://mumbai.polygonscan.io/address/0xe52eef7bD31dB7d6fEfB6985d6A8aC6872519f69) |
+| DebtLockerFactory       | [0x0be0121bcE7A08C9A4260a49ff7747944994f4C6](https://mumbai.polygonscan.com/address/0x0be0121bcE7A08C9A4260a49ff7747944994f4C6) |
+| LoanFactory             | [0x1e79Dc2aae758ad8dea0FbFeA2e38178518e859E](https://mumbai.polygonscan.com/address/0x1e79Dc2aae758ad8dea0FbFeA2e38178518e859E) |
+| CollateralLockerFactory | [0xaC0F8d4C0b94584335A6D250A2768f45D1Ea7A61](https://mumbai.polygonscan.com/address/0xaC0F8d4C0b94584335A6D250A2768f45D1Ea7A61) |
+| FundingLockerFactory    | [0x3f11b2d7958Dd5F1797A9CaAeBE6A315a4475350](https://mumbai.polygonscan.com/address/0x3f11b2d7958Dd5F1797A9CaAeBE6A315a4475350) |
+| HlsRewardsFactory       | [0xe52eef7bD31dB7d6fEfB6985d6A8aC6872519f69](https://mumbai.polygonscan.com/address/0xe52eef7bD31dB7d6fEfB6985d6A8aC6872519f69) |
 
 ## Join us on Discord
 
