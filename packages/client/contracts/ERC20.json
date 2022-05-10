@@ -1,7 +1,6 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "FakeUSDC",
-  "sourceName": "packages/protocol/contracts/test/token/FakeUSDC.sol",
+  "contractName": "ERC20",
   "abi": [
     {
       "inputs": [

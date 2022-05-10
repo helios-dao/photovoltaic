@@ -1,6 +1,0 @@
-{
-  "name": "token",
-  "dependencies": {
-    "@openzeppelin/contracts": "^4.5.0"
-  }
-}

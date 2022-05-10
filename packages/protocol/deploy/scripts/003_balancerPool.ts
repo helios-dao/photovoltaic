@@ -37,7 +37,7 @@ module.exports = async ({
   const bPoolFactory = await hre.ethers.getContractAt(bPoolFactoryMeta.abi, bPoolFactoryAddress);
   const heliosToken = await hre.ethers.getContract('HeliosToken');
   const usdcAddress = await getContractAddress('USDC', chainId);
-  const usdcToken = await hre.ethers.getContractAt('FakeUSDC', usdcAddress);  // Real USDC and FakeUSDC have same ABI.
+  const usdcToken = await hre.ethers.getContractAt('FakeUSDC', usdcAddress);  // Real USDC and ERC20 have same ABI.
 
   const TX = { gasLimit: 300000 };
 

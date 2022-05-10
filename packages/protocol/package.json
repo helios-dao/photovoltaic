@@ -1,13 +1,22 @@
 {
   "name": "protocol",
+  "scripts": {
+    "localnode": "yarn hardhat clean && yarn hardhat node",
+    "clean": "yarn hardhat clean",
+    "compile": "yarn hardhat compile",
+    "test": "yarn hardhat test",
+    "serve": "yarn hardhat node",
+    "deploy": "yarn hardhat deploy --network localhost"
+  },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.5",
-    "@openzeppelin/hardhat-upgrades": "^1.16.1",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
+    "@openzeppelin/contracts": "^3.0.0",
     "ethers": "^5.6.1",
-    "hardhat": "^2.9.1"
+    "hardhat": "^2.9.1",
+    "hardhat-contract-sizer": "^2.5.1",
+    "hardhat-deploy": "^0.11.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.5.0",
-    "create-react-app": "^5.0.1"
+    "dotenv-flow": "^3.2.0"
   }
 }

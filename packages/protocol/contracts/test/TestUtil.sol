@@ -15,7 +15,7 @@ import "./user/EmergencyAdmin.sol";
 
 import "../HeliosGlobals.sol";
 import "../HeliosTreasury.sol";
-import "../../../token/contracts/HeliosToken.sol";
+import "../token/HeliosToken.sol";
 
 import "../CollateralLockerFactory.sol";
 import "../DebtLockerFactory.sol";
@@ -40,7 +40,7 @@ import "../oracles/UsdOracle.sol";
 import "../interfaces/IBPool.sol";
 import "../interfaces/IBFactory.sol";
 
-import "../../../ds-test/contracts/test.sol";
+import "../ds-test/test.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface Hevm {

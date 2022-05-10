@@ -1,4 +1,4 @@
-import usdc from "./FakeUSDC.json";
+import usdc from "./ERC20.json";
 import pool from "./Pool.json";
 import poolFactory from "./PoolFactory.json";
 
