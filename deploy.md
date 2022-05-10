@@ -68,7 +68,18 @@ Get an API key from Etherscan and add it to your `.env` under `ETHERSCAN_API_KEY
 
 ## Current state
 
-The deploy scripts are currently tested locally only. They will fork Rinkeby, deploy all the contracts, set the config, and create + fund a balancer pool. Once the local network is running (`yarn localnode`), you can play in the console (`yarn hardhat console --network localhost`) with the functions in `deploy/helpers/testing.ts`. Go in order:
+The deploy scripts are currently tested locally only. They will fork Rinkeby, deploy all the contracts, set the config, and create + fund a balancer pool. Once the local network is running (`yarn localnode`), you can play in the console (`yarn hardhat console --network localhost`) manually or with the functions in `deploy/helpers/testing.ts`. 
+
+### Manually
+Example:
+```
+const heliosGlobals = await hre.ethers.getContract('HeliosGlobals');
+await heliosGlobals.hls()
+//'0x0b932e28000A132fd25A36795f4Fd5F4557693DA'
+```
+
+### Using functions
+Go in order:
 
 1. `createPool(bPoolAddress)` (you'll see `bPoolAddress` in the node's logs)
 2. `deposit(poolAddress, amount)` (`poolAddress` is outputed by the previous function, `amount` is up to you)
