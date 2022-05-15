@@ -5,3 +5,4 @@ key.json
 .env*
 
 .npm
+.history
