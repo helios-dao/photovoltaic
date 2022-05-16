@@ -4,6 +4,7 @@ import poolFactory from "./PoolFactory.json";
 import globals from "./HeliosGlobals.json"
 import stakeLockerFactory from "./StakeLockerFactory.json"
 import liquidityLockerFactory from "./LiquidityLockerFactory.json"
+import bPool from "./BPool.json"
 
 export default {
   pool: pool.abi,
@@ -11,5 +12,6 @@ export default {
   usdc: usdc.abi,
   globals: globals.abi,
   stakeLockerFactory: stakeLockerFactory.abi,
-  liquidityLockerFactory: liquidityLockerFactory.abi
+  liquidityLockerFactory: liquidityLockerFactory.abi,
+  bPool: bPool.abi
 };
