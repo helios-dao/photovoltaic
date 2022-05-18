@@ -1,7 +1,6 @@
 import { Button } from "@components/button";
 import abi from "contracts";
 import addresses from "contracts/addresses";
-import { ethers } from "ethers";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -10,14 +9,11 @@ import { getContract } from "src/utils";
 import useWallet from "src/hooks/useWallet";
 import useContract from "src/hooks/useContract";
 
-
-
 // creates pool but does not initialize
 // context: https://github.com/maple-labs/maple-core/wiki/Pool-Creation
 
 export default function CreatePoolPage() { 
-    const router = useRouter();
-    const { account } = useWallet();
+    const { account, network } = useWallet();
     const [isPoolDelegate, setIsPoolDelegate] = useState(false);
 
     const globals = useContract(HELIOS_GLOBALS_ADDRESS, abi.globals);
@@ -28,54 +24,47 @@ export default function CreatePoolPage() {
     const poolFactory = useContract(POOL_FACTORY_ADDRESS, abi.poolFactory);
   
     useEffect(() => {
-      checkIfPoolDelegate(account);
-    }, [isPoolDelegate]);
+      checkIfPoolDelegate();
+    }, [account]);
+
 
     const checkIfPoolDelegate = async () => {
-      if (!account == null) {
-        alert('No account found.');
-        return;
+      if (account === null) {
+          console.error("No account found")
+          return <div>No account found.</div>;
       }
-      const isPoolDelegate =await globals?.isValidPoolDelegate(account);
+      if(globals === null){
+        console.error("Cannot find HeliosGlobals contract instance") 
+        return <div>No account found.</div>
+      }
 
-      console.log("isPoolDelegate", isPoolDelegate)
-      
+      const isPoolDelegate =await globals?.isValidPoolDelegate(account);      
       setIsPoolDelegate(isPoolDelegate);
       };
 
    
-    const createNewPool = async () => {
-      if (!isPoolDelegate) alert(<h1>Sorry! You are not permissioned to create a pool.</h1>);
+    const createNewLiquidityPool = async () => {
+      if(usdcToken === null || poolFactory === null || slFactory  === null || llFactory === null || bPool === null){
+        return <div>`Cannot create pool on ${network}.`</div>
+      }
+      if (!isPoolDelegate) return(<h1>Sorry! You are not permissioned to create a pool.</h1>);
+      console.log("going to create pool on:", network.name)   
+
+      const index = await poolFactory.poolsCreated();    
     
-      const index = await poolFactory?.poolsCreated();
-      console.log("pools created", index);
-      // liquidityAsset, stakeAsset, slFactory, llFactory, stakingFee, delegateFee, liquidityCap
-      
-      const usdcAddress = usdcToken.address;
-      console.log(`usdcAdd = ${usdcAddress}`);
-      console.log(`bPoolAdd = ${bPool.address}`);
-      console.log(`slFactory.add = ${slFactory.address}`);
-      console.log(`llFactory.add = ${llFactory.address}`);
-
-
-      const tx = await poolFactory?.createPool(usdcToken.address, bPool.address, slFactory?.address, llFactory?.address, 0, 0, 10 ** 13);
-      await tx.await();
-
-
-      const poolAddress = await poolFactory?.pools(index);
-      poolAddress.await;
-
-      console.log(`Pool created at ${poolAddress}.`);
-      const pool =  async() => await useContract(poolAddress, abi.pool);
-    
-      pool.finalize();
-      console.log('Pool finalized')
-      pool.setOpenToPublic(false);
-
-      return poolAddress
+      var tx;
+      try {
+        tx = await poolFactory.createPool(usdcToken.address, bPool.address, slFactory.address, llFactory.address, 0, 0, 10 ** 13);
+        await tx.wait;
+        const poolAddress = await poolFactory.pools(index);
+        console.log(`Pool created at ${poolAddress}.`);
+        return <div>`Success! Pool created on ${network.name} address: ${poolAddress}`</div>
+      } catch (error) {
+          console.log(`Error creating pool: ${error}`)
+          return <div>Error creating pool</div>;
+      }
     };
-
-      
+    
     return(
         <>
         <div>
@@ -84,7 +73,7 @@ export default function CreatePoolPage() {
             <a>&larr; Home</a>
           </Link>
         </div>
-        <Button onClick={createNewPool}>Create a new Pool</Button>
+        <Button onClick={createNewLiquidityPool}>Create a new Pool</Button>
         </>
     );
   }
