@@ -5,121 +5,174 @@ import { USDC_ADDRESS } from "src/constants";
 import useContract from "src/hooks/useContract";
 import parseUsdc from "src/utils/parseUsdc";
 
-const InvestForm = ({ pool }) => {
-  const [status, setStatus] = useState({});
-  const [amount, setAmount] = useState(undefined);
-  const [errorMsg, setError] = useState("");
-  const poolContract = useContract(pool.address, abi.pool);
-  const usdcToken = useContract(USDC_ADDRESS, abi.usdc);
+type BlockchainTransactionExecuteProps = {
+  contract: any;
+  functionName: string;
+  args: any[];
+};
 
-  const {
-    hasApproved,
-    hasDeposited,
-    hasInvested,
-    isApproving,
-    isDepositing,
-    isError,
-    isInvesting,
-  } = status;
+type UseBlockchainTransactionReturn = {
+  error: unknown;
+  execute: (args: BlockchainTransactionExecuteProps) => Promise<void>;
+  status: StatusEnum;
+};
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError("");
-    setStatus({
-      ...status,
-      hasApproved: false,
-      hasDeposited: false,
-      hasInvested: false,
-      isApproving: false,
-      isDepositing: false,
-      isError: false,
-      isInvesting: false,
-    });
+const handleError = (e: unknown): string => {
+  if (typeof e === "string") {
+    return e;
+  } else if (e instanceof Error) {
+    return e.message;
+  } else {
+    return "";
+  }
+};
 
-    if (poolContract == null || usdcToken == null) {
-      setError("Contracts are not initialized");
-      return;
-    }
-    if (!amount || amount < 0) {
-      setError("Amount has to be positive");
-      return;
-    }
+const useBlockchainTransaction = (): UseBlockchainTransactionReturn => {
+  const [status, setStatus] = useState<StatusEnum>(StatusEnum.Init);
+  const [error, setError] = useState<string | null>(null);
 
-    setStatus({
-      ...status,
-      isInvesting: true,
-      isApproving: true,
-      isError: false,
-    });
+  const execute = async ({
+    contract,
+    functionName,
+    args,
+  }: BlockchainTransactionExecuteProps): Promise<void> => {
+    setError(null);
+    setStatus(StatusEnum.Pending);
     try {
-      const parsedAmount = parseUsdc(amount);
-      let tx = await usdcToken.approve(pool.address, parsedAmount);
+      const tx = await contract[functionName](...args);
       await tx.wait();
-      setStatus({
-        ...status,
-        isApproving: false,
-        hasApproved: true,
-        isDepositing: true,
-      });
-      tx = await poolContract.deposit(parsedAmount);
-      await tx.wait();
-      setStatus({
-        ...status,
-        isDepositing: false,
-        hasDeposited: true,
-        hasInvested: true,
-        isInvesting: false,
-      });
+      setStatus(StatusEnum.Complete);
     } catch (error) {
-      setStatus({
-        ...status,
-        isError: true,
-      });
-      setError(error.reason);
+      setStatus(StatusEnum.Error);
+      setError(handleError(error));
     }
   };
 
+  return {
+    error,
+    execute,
+    status,
+  };
+};
+
+enum StatusEnum {
+  Complete = "complete",
+  Error = "error",
+  Init = "init",
+  Pending = "pending",
+}
+
+const STATUS_MAP = {
+  [StatusEnum.Complete]: "Complete",
+  [StatusEnum.Error]: "Error",
+  [StatusEnum.Init]: "Not started",
+  [StatusEnum.Pending]: "Waiting...",
+};
+
+type BlockchainTransactionStepProps = {
+  status: StatusEnum;
+  stepName: string;
+};
+
+const BlockchainTransactionStep = ({
+  status,
+  stepName,
+}: BlockchainTransactionStepProps) => {
+  return (
+    <div>
+      {stepName}:{STATUS_MAP[status]}
+    </div>
+  );
+};
+
+type IPool = {
+  address: string;
+};
+
+type InvestFormProps = {
+  pool: IPool;
+};
+
+const InvestForm = ({ pool }: InvestFormProps): JSX.Element => {
+  const [amount, setAmount] = useState<number | undefined>();
+  const [localErrorMsg, setLocalErrorMsg] = useState<string | null>();
+  const poolContract = useContract(pool.address, abi.pool);
+  const usdcToken = useContract(USDC_ADDRESS, abi.usdc);
+  const approveTx = useBlockchainTransaction();
+  const depositTx = useBlockchainTransaction();
+
   const isReady = poolContract !== null && usdcToken !== null;
+  const hasInvested =
+    approveTx.status === StatusEnum.Complete &&
+    depositTx.status === StatusEnum.Complete;
+  const isInvesting =
+    approveTx.status === StatusEnum.Pending ||
+    depositTx.status === StatusEnum.Pending;
+  const errorMsg = localErrorMsg || approveTx.error || depositTx.error;
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLocalErrorMsg(null);
+
+    if (poolContract == null || usdcToken == null) {
+      setLocalErrorMsg("Contracts are not initialized");
+      return;
+    }
+    if (!amount || amount < 0) {
+      setLocalErrorMsg("Amount has to be positive");
+      return;
+    }
+
+    const parsedAmount = parseUsdc(amount.toString());
+    await approveTx.execute({
+      contract: usdcToken,
+      functionName: "approve",
+      args: [pool.address, parsedAmount],
+    });
+    await depositTx.execute({
+      contract: poolContract,
+      functionName: "deposit",
+      args: [parsedAmount],
+    });
+  };
 
   if (hasInvested) return <div>Your investment is complete</div>;
 
   if (isInvesting) {
     return (
-      <div>
-        <div>
-          1. Approval:
-          {hasApproved
-            ? "Complete"
-            : isApproving
-            ? "Waiting..."
-            : "Not started"}
-        </div>
-        <div>
-          2. Deposit:
-          {hasDeposited
-            ? "Complete"
-            : isDepositing
-            ? "Waiting..."
-            : "Not started"}
-        </div>
-      </div>
+      <>
+        <BlockchainTransactionStep
+          status={approveTx.status}
+          stepName="1. Approval"
+        />
+        <BlockchainTransactionStep
+          status={depositTx.status}
+          stepName="2. Deposit"
+        />
+      </>
     );
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <input
-        type="text"
+        type="number"
         name="amount"
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={(e) =>
+          setAmount(
+            e.target.value !== "" ? parseFloat(e.target.value) : undefined,
+          )
+        }
         defaultValue={amount}
       />
-      {isError ? (
-        <Button disabled={!isReady}>Retry</Button>
+      {errorMsg ? (
+        <>
+          <div>Error: {errorMsg}</div>
+          <Button disabled={!isReady}>Retry</Button>
+        </>
       ) : (
         <Button disabled={!isReady}>Invest</Button>
       )}
-      {errorMsg !== "" && <div>Error: {errorMsg}</div>}
     </form>
   );
 };
