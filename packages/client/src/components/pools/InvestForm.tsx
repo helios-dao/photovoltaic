@@ -1,13 +1,11 @@
-// import { initialize as burrataInit, verifyWallet } from "@burrata/sdk.ethers";
 import { Button } from "@components/button";
-// import { Provider } from "@ethersproject/providers";
 import abi from "contracts";
-import Persona from "persona";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { USDC_ADDRESS } from "src/constants";
-import db from "src/db";
 import useContract from "src/hooks/useContract";
+import usePersona from "src/hooks/usePersona";
 import useWallet from "src/hooks/useWallet";
+import { fetchPersonaKycStatus } from "src/utils/api";
 import parseUsdc from "src/utils/parseUsdc";
 
 type BlockchainTransactionExecuteProps = {
@@ -96,87 +94,10 @@ type IPool = {
 
 type InvestFormProps = {
   pool: IPool;
+  onInvest: () => void;
 };
 
-// export const useBurrata = () => {
-//   const [data, setData] = useState(null);
-//   const [user, setUser] = useState(null);
-
-//   const callback = ({ type, data }: { type: string; data: any }) => {
-//     console.log("burrata callback", type, data);
-//     switch (type) {
-//       case "claimReceived":
-//         setData(data);
-//         break;
-
-//       default:
-//         break;
-//     }
-//   };
-
-//   const connect = useCallback(async (account: string, provider: Provider) => {
-//     console.log("connecting...");
-//     try {
-//       const user = await burrataInit({
-//         callback,
-//         account,
-//         provider,
-//         kyc: {
-//           provider: "WithPersona",
-//         },
-//         info: {
-//           name: "My Awesome DEX",
-//           logoUrl: "https://hello.com/my-logo.png", // 64 x 64
-//         },
-//       });
-
-//       console.log("burrata user", user);
-
-//       setUser(user);
-//     } catch (error) {
-//       console.log("burrata error", error);
-//       setUser(null);
-//     }
-//   }, []);
-
-//   return [user, connect];
-// };
-
-const usePersona = () => {
-  const [client, setClient] = useState(null);
-  const [status, setStatus] = useState("init");
-
-  const connect = useCallback(async (account: string) => {
-    const client = new Persona.Client({
-      templateId: "itmpl_JePii96YJMv8UjeMjJFp9zV9",
-      environment: "sandbox",
-      referenceId: account,
-      onReady: () => setStatus("ready"),
-      onComplete: ({ inquiryId, status, fields }) => {
-        // Inquiry completed. Optionally tell your server about it.
-        setStatus(status);
-        console.log(`finished inquiry ${inquiryId} with status ${status}`);
-      },
-      onCancel: ({ inquiryId, sessionToken }) => {
-        console.log("onCancel");
-        setStatus("cancel");
-      },
-      onError: (error) => {
-        console.log(error);
-        setStatus("error");
-      },
-    });
-    setClient(client);
-  }, []);
-
-  const reset = () => {
-    if (status !== "init" && status !== "ready") setStatus("ready");
-  };
-
-  return { connect, client, reset, status };
-};
-
-const InvestForm = ({ pool }: InvestFormProps): JSX.Element => {
+const InvestForm = ({ pool, onInvest }: InvestFormProps): JSX.Element => {
   const { account } = useWallet();
   const [amount, setAmount] = useState<number | undefined>();
   const [localErrorMsg, setLocalErrorMsg] = useState<string | null>();
@@ -184,35 +105,12 @@ const InvestForm = ({ pool }: InvestFormProps): JSX.Element => {
   const usdcToken = useContract(USDC_ADDRESS, abi.usdc);
   const approveTx = useBlockchainTransaction();
   const depositTx = useBlockchainTransaction();
-  // const [burrataUser, burrataConnect] = useBurrata();
   const {
     connect: personaConnect,
     client: personaClient,
-    reset,
     status,
   } = usePersona();
-  const [needsKyc, setNeedsKyc] = useState(true);
-
-  // useEffect(() => {
-  //   if (!account || !provider || !burrataConnect) return;
-  //   burrataConnect(account, provider);
-  // }, [account, provider, burrataConnect]);
-
-  useEffect(() => {
-    if (!account) return;
-    personaConnect(account);
-  }, [account]);
-
-  useEffect(() => {
-    if (!account) return;
-    if (status === "completed") onComplete();
-    fetchKycStatus();
-  }, [account, status]);
-
-  const fetchKycStatus = async () => {
-    const kyc = isApproved(account);
-    setNeedsKyc(kyc);
-  };
+  const [needsKyc, setNeedsKyc] = useState(null);
 
   const isReady = poolContract !== null && usdcToken !== null;
   const hasInvested =
@@ -223,18 +121,28 @@ const InvestForm = ({ pool }: InvestFormProps): JSX.Element => {
     depositTx.status === StatusEnum.Pending;
   const errorMsg = localErrorMsg || approveTx.error || depositTx.error;
 
-  const isApproved = async (account: string) => {
-    const kyc = await db.collection("kyc").get(account);
-    return !!kyc && kyc.status === "complete";
+  useEffect(() => {
+    if (!account) return;
+    personaConnect(account);
+  }, [account]);
+
+  useEffect(() => {
+    if (!account) return;
+    fetchKycStatus();
+  }, [account, status]);
+
+  useEffect(() => {
+    if (hasInvested) onInvest();
+  }, [hasInvested]);
+
+  const fetchKycStatus = async () => {
+    const kyc = await fetchPersonaKycStatus(account);
+    setNeedsKyc(kyc);
   };
 
-  const onComplete = async () => {
-    const docRef = db.collection("kyc").doc(account);
-
-    await docRef.set({ status: "complete" });
-  };
-
-  const openPersona = async (event: React.MouseEvent<HTMLInputElement>) => {
+  const handleVerifyIdentity = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     event.preventDefault();
     setLocalErrorMsg(null);
 
@@ -243,17 +151,7 @@ const InvestForm = ({ pool }: InvestFormProps): JSX.Element => {
       return;
     }
 
-    reset();
     personaClient.open();
-
-    // if (!burrataUser) {
-    //   setLocalErrorMsg("Burrata is not initialized");
-    //   return;
-    // }
-
-    // if (!burrataUser.isVerified) {
-    //   verifyWallet();
-    // }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -281,10 +179,13 @@ const InvestForm = ({ pool }: InvestFormProps): JSX.Element => {
 
   if (hasInvested) return <div>Your investment is complete</div>;
 
+  // KYC info is loading:
+  if (needsKyc === null) return <></>;
+
   if (needsKyc)
     return (
       <div>
-        <button onClick={openPersona}>Verify Identity</button>
+        <button onClick={handleVerifyIdentity}>Verify Identity</button>
       </div>
     );
 
