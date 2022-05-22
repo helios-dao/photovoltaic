@@ -15,9 +15,10 @@ import WalletWrapper from "@components/WalletWrapper";
 
 export default function CreatePoolPage() { 
 
-    const { account, network, signer, provider } = useWallet();
+    const { account, network, signer, provider, isConnected} = useWallet();
     const [isPoolDelegate, setIsPoolDelegate] = useState(false);
-
+    const [localErrorMsg, setLocalErrorMsg] = useState<string | null>();
+    
     const globals = useContract(HELIOS_GLOBALS_ADDRESS, abi.globals);
     const bPool = useContract(BPOOL_ADDRESS, abi.bPool);
     const usdcToken = useContract(USDC_ADDRESS, abi.usdc);
@@ -25,16 +26,16 @@ export default function CreatePoolPage() {
     const llFactory = useContract(LIQUIDITY_LOCKER_FACTORY_ADDRESS, abi.liquidityLockerFactory);
     const poolFactory = useContract(POOL_FACTORY_ADDRESS, abi.poolFactory);
   
+    
+    useEffect(() => {
+      isConnected;
+    }, [account, globals]);
+
+
     useEffect(() => {
       checkIfPoolDelegate();
-    }, [account]);
+    }, [account, globals]);
 
-    /*poolFactory.on("PoolCreated", (pool, delegate, liquidityAsset, stakeAsset, liquidityLocker, stakeLocker, stakingFee, delegateFee, liquidityCap, name, symbol) => {
-      // Called when anyone changes the value
-      console.log(pool);
-      console.log(delegate);
-  });
-  */
 
     const checkIfPoolDelegate = async () => {
       if (account === null) {
@@ -52,17 +53,15 @@ export default function CreatePoolPage() {
 
   
     const createNewLiquidityPool = async () => {
-      if(!signer){
-        return;
-      }
-      
-      if(!usdcToken || !poolFactory || !slFactory || !llFactory || !bPool){
+      const isReady = usdcToken !== null || poolFactory !== null || slFactory !== null || llFactory !== null || bPool !== null;
+
+      if(!signer || !isReady){
         return;
       }
 
       if (!isPoolDelegate) {
         console.log("not a valid pool delegate");
-        return(<h1>Sorry! You are not permissioned to create a pool.</h1>);
+        return;
       }
       console.log("going to create pool on:", getNetworkName(network))   
 
@@ -72,6 +71,7 @@ export default function CreatePoolPage() {
         let tx = await poolFactory.createPool(usdcToken.address, bPool.address, slFactory.address, llFactory.address, 0, 0, 10 ** 13);
         console.log(tx.hash);
         // The operation is NOT complete yet; we must wait until it is mined
+        
         await tx.wait();  
         console.log(tx.pool);
         
@@ -87,12 +87,14 @@ export default function CreatePoolPage() {
     return(
         <>
         <div>
-        <h3>Create a new Investment Pool on {getNetworkName(network)}</h3>
+        { (isConnected) ?
+          (<h3>Create a new Investment Pool on {getNetworkName(network)}</h3>)
+        : (<h3>Connect wallet to create an investment pool.</h3>)
+        }
           <Link href="/">
             <a>&larr; Home</a>
           </Link>
         </div>
-        
         <Button onClick={createNewLiquidityPool}>Create a new Pool</Button>
         </>
     );
