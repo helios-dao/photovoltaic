@@ -1,15 +1,13 @@
 import { Button } from "@components/button";
 import abi from "contracts";
-import addresses from "contracts/addresses";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BPOOL_ADDRESS, HELIOS_GLOBALS_ADDRESS, USDC_ADDRESS, LIQUIDITY_LOCKER_FACTORY_ADDRESS, POOL_FACTORY_ADDRESS, STAKE_LOCKER_FACTORY_ADDRESS } from "src/constants";
-import { getContract, getNetworkName } from "src/utils";
+import { getNetworkName } from "src/utils";
 import useWallet from "src/hooks/useWallet";
 import useContract from "src/hooks/useContract";
-import WalletWrapper from "@components/WalletWrapper";
-import { ethers } from "ethers";
+import { getAddress } from "@ethersproject/address";
+import { Contract } from "@ethersproject/contracts";
 
 // creates pool but does not initialize
 // context: https://github.com/maple-labs/maple-core/wiki/Pool-Creation
