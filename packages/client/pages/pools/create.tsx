@@ -9,6 +9,7 @@ import { getContract, getNetworkName } from "src/utils";
 import useWallet from "src/hooks/useWallet";
 import useContract from "src/hooks/useContract";
 import WalletWrapper from "@components/WalletWrapper";
+import { ethers } from "ethers";
 
 // creates pool but does not initialize
 // context: https://github.com/maple-labs/maple-core/wiki/Pool-Creation
@@ -55,7 +56,13 @@ export default function CreatePoolPage() {
   const createNewLiquidityPool = async () => {
     const isReady = usdcToken !== null || poolFactory !== null || slFactory !== null || llFactory !== null || bPool !== null;
 
-    if (!signer || !isReady) {
+    const protocolPaused = await globals.protocolPaused();
+    if (!signer || !isReady || !globals) {
+      return;
+    }
+
+    if(protocolPaused){
+      console.log("protocol paused.", globals.protocolPaused())
       return;
     }
 
@@ -66,16 +73,29 @@ export default function CreatePoolPage() {
     console.log("going to create pool on:", getNetworkName(network))
 
 
-    poolFactory.createPool(usdcToken.address, bPool.address, slFactory.address, llFactory.address, 0, 0, 10 ** 13, { gasLimit: 2000000 }).then((tx) => {
+    /**
+     * createPool: creates a new Liquitity pool
+     * params:
+     * liquidityAsset: address
+     * stakeAsset: address
+     * slFactory: address
+     * llFactory: address
+     * stakingFee: uint256
+     * delegateFee: uint256
+     * liquidityCap: uint256
+    */
+
+  
+    poolFactory.createPool(usdcToken.address, bPool.address, slFactory.address, llFactory.address, 0, 0, 10 * 13, { gasLimit: 2000000 }).then((tx) => {
       return tx.wait().then((receipt) => {
         // This is entered if the transaction receipt indicates success
-        console.log("blah blah", receipt.toString);
+        console.log("success", receipt.toString);
         setNewPoolAddress(receipt);
         setNewPoolSuccess(true);
         return;
       }, (error) => {
         // This is entered if the status of the receipt is failure
-          console.log("Error", error);
+          console.log(error);
           setNewPoolSuccess(false);
           return;
       }
@@ -94,9 +114,9 @@ export default function CreatePoolPage() {
           <a>&larr; Home</a>
         </Link>
       </div>
-      {(newPoolSuccess) ?
+      {(newPoolSuccess) ??
         <h3>New Pool Created Successfully!</h3>
-        : <h3>Error creating new pool</h3>}
+      }
       <Button onClick={createNewLiquidityPool}>Create a new Pool</Button>
     </>
   );
