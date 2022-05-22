@@ -6,8 +6,8 @@
   },
   "extends": [
     "plugin:@typescript-eslint/recommended",
-    "standard",
-    "prettier/@typescript-eslint",
+    "standard-with-typescript",
+    "standard-jsx",
     "plugin:prettier/recommended"
   ],
   "plugins": ["@typescript-eslint"],

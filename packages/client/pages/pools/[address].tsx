@@ -12,35 +12,28 @@ import formatUsdc from "src/utils/formatUsdc";
 export default function PoolPage() {
   const router = useRouter();
   const params = router.query;
-  const [pool, setPool] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [totalParticipation, setTotalParticipation] = useState(null);
   const poolContract = useContract(params.address, abi.pool);
   const usdcToken = useContract(USDC_ADDRESS, abi.usdc);
+  const [hasInvested, setHasInvested] = useState(false);
+  const pool = POOLS.find((pool) => params.address === pool.address);
 
   useEffect(() => {
-    if (pool !== null) setIsLoading(false);
-  }, [pool]);
+    fetchTotalParticipation();
+  }, [poolContract, usdcToken, hasInvested]);
 
-  useEffect(() => {
-    fetchPool();
-  }, [poolContract, usdcToken]);
-
-  const fetchPool = async () => {
+  const fetchTotalParticipation = async () => {
     if (!poolContract || !usdcToken) return;
-
-    const pool = POOLS.find((pool) => params.address === pool.address);
-    if (!pool) return;
 
     const totalParticipation = await usdcToken.balanceOf(
       await poolContract.liquidityLocker(),
     );
-    setPool({
-      ...pool,
-      participation: formatUsdc(totalParticipation.toString()),
-    });
+    setTotalParticipation(formatUsdc(totalParticipation.toString()));
   };
 
-  if (isLoading) return <div />;
+  const handleInvest = () => {
+    setHasInvested(true);
+  };
 
   if (!pool) return <div>Could not find pool</div>;
 
@@ -52,10 +45,10 @@ export default function PoolPage() {
         </Link>
       </div>
       <div>{pool.name}</div>
-      <div>Total participation: ${pool.participation || "??"}</div>
+      <div>Total participation: ${totalParticipation || "??"}</div>
       <WalletWrapper>
-        <UserParticipation pool={pool} />
-        <InvestForm pool={pool} />
+        <UserParticipation pool={pool} hasInvested={hasInvested} />
+        <InvestForm pool={pool} onInvest={handleInvest} />
       </WalletWrapper>
     </>
   );
