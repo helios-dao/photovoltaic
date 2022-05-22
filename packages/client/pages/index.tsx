@@ -8,7 +8,7 @@ import { shortenAddress } from "src/utils";
 import formatUsdc from "src/utils/formatUsdc";
 
 const Dashboard: React.FC = ({}) => {
-  const { account, provider } = useWallet();
+  const { account , provider } = useWallet();
   const [amount, setAmount] = useState(null);
   let contract;
 
