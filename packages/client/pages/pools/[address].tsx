@@ -5,9 +5,10 @@ import abi from "contracts";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { POOLS, USDC_ADDRESS } from "src/constants";
+import { USDC_ADDRESS } from "src/constants";
 import useContract from "src/hooks/useContract";
 import formatUsdc from "src/utils/formatUsdc";
+import { POOLS } from "src/metadata/pools/mumbai";
 
 export default function PoolPage() {
   const router = useRouter();

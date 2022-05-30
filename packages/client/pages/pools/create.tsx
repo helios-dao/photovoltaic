@@ -53,11 +53,14 @@ export default function CreatePoolPage() {
 
   const createNewLiquidityPool = async () => {
     const isReady = usdcToken !== null || poolFactory !== null || slFactory !== null || llFactory !== null || bPool !== null;
-
-    const protocolPaused = await globals.protocolPaused();
-    if (!signer || !isReady || !globals) {
+    if (!signer || !isReady || !globals ) {
       return;
     }
+    const protocolPaused = await globals.protocolPaused();
+
+    const isValidPoolFactory = await globals.isValidPoolFactory(poolFactory?.address);
+    const isValidBalancerPool = await globals.isValidBalancerPool(bPool?.address);
+    const isValidLiquidityAsset = await globals.isValidLiquidityAsset(usdcToken?.address);
 
     if(protocolPaused){
       console.log("protocol paused.", globals.protocolPaused())
@@ -68,29 +71,21 @@ export default function CreatePoolPage() {
       console.log("not a valid pool delegate");
       return;
     }
+
+    if(!isValidPoolFactory || !isValidBalancerPool || !isValidLiquidityAsset) return <div> Missing valid contract to create pool.</div>
+
+
+
     console.log("going to create pool on:", getNetworkName(network))
 
-
-    /**
-     * createPool: creates a new Liquitity pool
-     * params:
-     * liquidityAsset: address
-     * stakeAsset: address
-     * slFactory: address
-     * llFactory: address
-     * stakingFee: uint256
-     * delegateFee: uint256
-     * liquidityCap: uint256
-    */
-
-  
+    // createPool: liquidityAsset, stakeAsset, slFactory, llFactory, stakingFee, delegateFee, liquidityCap
     poolFactory.createPool(usdcToken.address, bPool.address, slFactory.address, llFactory.address, 0, 0, 10 * 13, { gasLimit: 2000000 }).then((tx) => {
       return tx.wait().then((receipt) => {
         // This is entered if the transaction receipt indicates success
         console.log("success", receipt.toString);
         setNewPoolAddress(receipt);
         setNewPoolSuccess(true);
-        return;
+        return receipt;
       }, (error) => {
         // This is entered if the status of the receipt is failure
           console.log(error);
@@ -113,7 +108,7 @@ export default function CreatePoolPage() {
         </Link>
       </div>
       {(newPoolSuccess) ??
-        <h3>New Pool Created Successfully!</h3>
+        <h3>New pool created successfully at address: ${newPoolAddress}</h3>
       }
       <Button onClick={createNewLiquidityPool}>Create a new Pool</Button>
     </>

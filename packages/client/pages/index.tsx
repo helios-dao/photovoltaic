@@ -1,8 +1,8 @@
 import { CardsList, Card } from "@components";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { POOLS } from "src/constants";
 import useWallet from "src/hooks/useWallet";
+import { POOLS } from "src/metadata/pools/mumbai";
 import { Pool__factory } from "src/types/ethers-contracts";
 import { shortenAddress } from "src/utils";
 import formatUsdc from "src/utils/formatUsdc";
