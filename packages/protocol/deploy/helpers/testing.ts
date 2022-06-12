@@ -1,4 +1,4 @@
-const { getContractAddress } = require('./helpers.ts');
+const { getContractAddress, getMeta} = require('./helpers.ts');
 
 const CHAIN_ID = 80001;
 

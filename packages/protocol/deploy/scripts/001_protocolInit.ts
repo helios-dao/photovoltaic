@@ -1,5 +1,4 @@
 const { getContractAddress } = require('./../helpers/helpers.ts');
-
 // Deploys all the contracts.
 module.exports = async ({
   getChainId,
@@ -29,10 +28,10 @@ module.exports = async ({
     console.log(`Deployed ${name} at ${contract.address}`);
   };
 
-  // Locally, we want to deploy a fake USDC contract so we can easily mint tokens for
+  // We want to deploy a fake USDC contract when testing so we can easily mint tokens for
   // ourselves.
   const chainId = await getChainId();
-  if (chainId == 1337) {
+  if (chainId == 1337 || chainId == 80001) {
     await deployContract({ name: 'FakeUSDC', args: [hre.ethers.utils.parseEther("1000000.0").toString()] })
   }
 

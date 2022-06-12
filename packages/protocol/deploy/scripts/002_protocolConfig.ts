@@ -1,4 +1,5 @@
 const { getContractAddress } = require('./../helpers/helpers.ts');
+const {createBPool} = require('./../helpers/createBPool.ts')
 
 // Sets all the necessary variables in HeliosGlobals
 module.exports = async ({
@@ -53,8 +54,16 @@ module.exports = async ({
   await heliosGlobals.setDefaultUniswapPath(wbtcAddress, usdcAddress, usdcAddress, TX);
 
   const bPoolAddress = await getContractAddress('BPool', chainId);
+  
   if (bPoolAddress) {
-    console.log('setValidBalancerPool');
+    console.log('BPoolAddress found. Setting ValidBalancerPool.');
+    console.log(`bPoolAddress:`, bPoolAddress)
     await heliosGlobals.setValidBalancerPool(bPoolAddress, true, TX);
+  }
+  else{ 
+    const usdcAmount = '100000';  // USDC has 6 decimals
+    const hlsAmount = '1000000000000000000'; // HLS has 18 decimals
+    const bPoolAddress = await createBPool(usdcAmount, hlsAmount);
+    console.log('BPool successfully finalized at:', bPoolAddress)
   }
 };
