@@ -1,0 +1,11 @@
+.title {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    align-items: baseline;
+    padding: 1em;
+    margin-bottom: 1em;
+    background-color: rgb(163 230 53);
+    color: #fff;
+  }

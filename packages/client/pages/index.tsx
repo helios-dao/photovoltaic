@@ -1,4 +1,5 @@
-import { CardsList, Card } from "@components";
+import { CardsList, Card, Header } from "@components";
+import Title from "@components/header/title";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useWallet from "src/hooks/useWallet";
@@ -33,7 +34,7 @@ const Dashboard: React.FC = ({}) => {
     setAmount(formatUsdc(amount.toString()));
   };
 
-  return <div>Total invested: ${amount || "???"}</div>;
+  return <div>Total amount invested across pools: ${amount || "???"}</div>;
 };
 
 const Home: React.FC = () => {

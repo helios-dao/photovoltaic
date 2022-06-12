@@ -5,7 +5,7 @@ export const POOLS = [
       category: "",
       dataroom: "",
       description: "Fund projects in India",
-      poolDescription: "",
+      poolDescription: "This pool will fund solar projects in India.",
       poolHighlights: "",
     },
   ];
