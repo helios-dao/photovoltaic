@@ -1,9 +1,8 @@
 {
   "name": "helios-core",
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
+    "ts-node": "^10.8.1"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

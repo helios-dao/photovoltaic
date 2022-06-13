@@ -1,0 +1,10 @@
+{
+    "lateFee": 0,
+    "premiumFee": 0,
+    "loanEstablishmentFee": 0,
+    "stakingFee": 0,
+    "delegateFee": 0,
+    "liquidityAsset": "USDC",
+    "stakerCooldownPeriod": 10,
+    "lpCooldownPeriod": 10
+}

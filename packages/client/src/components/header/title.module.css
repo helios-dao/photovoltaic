@@ -3,7 +3,7 @@
     width: 100%;
     display: flex;
     justify-content: left;
-    align-items: baseline;
+    align-items: flex-start;
     padding: 1em;
     margin-bottom: 1em;
     background-color: rgb(163 230 53);

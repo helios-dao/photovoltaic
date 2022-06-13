@@ -74,20 +74,16 @@ export default function CreatePoolPage() {
 
     if(!isValidPoolFactory || !isValidBalancerPool || !isValidLiquidityAsset) return <div> Missing valid contract to create pool.</div>
 
-
-
     console.log("going to create pool on:", getNetworkName(network))
 
     // createPool: liquidityAsset, stakeAsset, slFactory, llFactory, stakingFee, delegateFee, liquidityCap
     poolFactory.createPool(usdcToken.address, bPool.address, slFactory.address, llFactory.address, 0, 0, 10 * 13, { gasLimit: 2000000 }).then((tx) => {
       return tx.wait().then((receipt) => {
-        // This is entered if the transaction receipt indicates success
         console.log("success", receipt.toString);
         setNewPoolAddress(receipt);
         setNewPoolSuccess(true);
         return receipt;
       }, (error) => {
-        // This is entered if the status of the receipt is failure
           console.log(error);
           setNewPoolSuccess(false);
           return;
@@ -95,6 +91,11 @@ export default function CreatePoolPage() {
       )
     });
   };
+
+  const finalizeAndOpenToPublic = async () => {
+        // approve
+        //finalize
+  }
 
   return (
     <>
@@ -108,7 +109,10 @@ export default function CreatePoolPage() {
         </Link>
       </div>
       {(newPoolSuccess) ??
+          <>
         <h3>New pool created successfully at address: ${newPoolAddress}</h3>
+        <Button disabled={!newPoolSuccess} onClick={finalizeAndOpenToPublic}>Finalize Pool and Open to Public</Button>
+        </>
       }
       <Button onClick={createNewLiquidityPool}>Create a new Pool</Button>
     </>

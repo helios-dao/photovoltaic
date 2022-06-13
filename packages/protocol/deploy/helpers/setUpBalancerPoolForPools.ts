@@ -1,7 +1,7 @@
 // requiring hardhat gives instance of hre
 const { getContractAddress, getMeta} = require('./helpers.ts');
 
-const createBPool = async(usdcAmount, hlsAmount) => {
+const setUpBalancerPoolForPools = async(usdcAmount, hlsAmount) => {
     const CHAIN_ID = 80001;
     const { deployer } = await hre.getNamedAccounts();
     const { deploy } = hre.deployments;
@@ -39,21 +39,34 @@ const createBPool = async(usdcAmount, hlsAmount) => {
     const bPoolFactory = await hre.ethers.getContractAt(bPoolFactoryMeta.abi, bPoolFactoryAddress);
     const heliosToken = await hre.ethers.getContract('HeliosToken');
 
+    let bPool;
+    try {
+        console.log('Creating BPool...');
+        const bPoolWait = await (await bPoolFactory.newBPool()).wait();
+        bPoolAddress = bPoolWait.logs[1].address;
+        bPool = await hre.ethers.getContractAt(getMeta('BPool').abi, bPoolAddress);
+        console.log(`Created BPool at ${bPoolAddress}`);
+    } catch (error) {
+        console.log(error.toString);
+    };
 
-    console.log('Creating BPool...');
-    const bPoolWait = await (await bPoolFactory.newBPool()).wait();
-    bPoolAddress = bPoolWait.logs[1].address;
-    const bPool = await hre.ethers.getContractAt(getMeta('BPool').abi, bPoolAddress);
-    console.log(`Created BPool at ${bPoolAddress}`);
+    console.log('Initializing USDC/HLS Balancer pool');
+    try {
+        console.log('Bind USDC');
+        await usdc.approve(bPool.address, usdcAmount, TX);
+        await bPool.bind(usdc.address, usdcAmount, hre.ethers.BigNumber.from('5000000000000000000'), TX);
+        console.log('Bind HLS');
+        await heliosToken.approve(bPool.address, hlsAmount, TX);
+        await bPool.bind(heliosGlobals.hls(), hlsAmount, hre.ethers.BigNumber.from('5000000000000000000'), TX);
 
-    console.log('Bind USD')
-    await usdc.approve(bPool.address, usdcAmount, TX);
-
-    await bPool.bind(usdc.address, usdcAmount, hre.ethers.BigNumber.from('5000000000000000000'), TX);
-
-    console.log('Bind HLS')
-    await heliosToken.approve(bPool.address, hlsAmount, TX);
-    await bPool.bind(heliosGlobals.hls(), hlsAmount, hre.ethers.BigNumber.from('5000000000000000000'), TX);
+        const hlsBalance = heliosToken.balanceOf(bPoolAddress);
+        const usdcBalance = heliosToken.balanceOf(bPoolAddress);
+        console.log(`hlsBalance=${hlsBalance}`);
+        console.log(`usdcBalance=${hlsBalance}`);
+    } catch (error) {
+        console.log(`Error binding USDC/HLS to BPool`);
+        console.log(error.error.toString);
+    }
 
     console.log('Finalize')
     await bPool.finalize(TX);
@@ -63,20 +76,6 @@ const createBPool = async(usdcAmount, hlsAmount) => {
     return bPool.address;
 };
 
-/*
-User-accessible stuff needed for launch:
-- see all pools
-- contribute to a pool
-- see how much is contributed
-Admin-accessible stuff needed for launch:
-- create a pool
-Admin stuff needed for later (soon after):
-- create and fund a loan
-- repay loan
-User stuff needed for later (soon after):
-- distribute repayments
-*/
-
 module.exports = {
-  createBPool
+    setUpBalancerPoolForPools
 };

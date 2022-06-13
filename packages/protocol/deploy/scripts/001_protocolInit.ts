@@ -32,7 +32,9 @@ module.exports = async ({
   // ourselves.
   const chainId = await getChainId();
   if (chainId == 1337 || chainId == 80001) {
-    await deployContract({ name: 'FakeUSDC', args: [hre.ethers.utils.parseEther("1000000.0").toString()] })
+    await deployContract({ name: 'FakeUSDC', args: [hre.ethers.utils.parseEther("100000000.0").toString()] });
+    const fakeUSDCAddress = deployedContracts['FakeUSDC'];
+    console.log(`deployed FakeUSDC at address ${fakeUSDCAddress}`);
   }
 
   const CHAINLINK_USD_WBTC_AGGREGATOR = process.env.CHAINLINK_USD_WBTC_AGGREGATOR;  // chainlink USD-WBTC contract
@@ -40,7 +42,7 @@ module.exports = async ({
   const PREMIUM_FEE = 0;
   const TOKEN_NAME = 'Helios Token';  // token name
   const TOKEN_SYMBOL = 'HLS';  // token symbol
-  const TOKEN_AMOUNT = 1;   // amount to mint
+  const TOKEN_AMOUNT = 1000;   // amount to mint
   const UNISWAP_ROUTER = process.env.UNISWAP_ROUTER;  // uniswap router contract
   const usdcAddress = await getContractAddress('USDC', chainId);  // USD token contract
   const wbtcAddress = await getContractAddress('WBTC', chainId);  // WBTC token contract

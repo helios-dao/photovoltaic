@@ -58,7 +58,9 @@ If you need to add Mumbai or Polygon Mainnet to your metamask, the easiest way t
 If you need tokens for gas fees, go to a faucet and request tokens.
 Polygon: https://faucet.polygon.technology/
 
-Then run: <br>
+hardhat-deploy allows you to write deploy scripts in the deploy folder. Each of these files that look as follows will be executed in turn when you execute the following task: hardhat --network <networkName> deploy
+
+To deploy to a network, run: <br>
 ``` yarn hardhat deploy --network rinkeby ``` or ``` yarn hardhat deploy --network mumbai ```
 
 ## Verifying the source code on Etherscan
@@ -76,7 +78,10 @@ Example:
 const heliosGlobals = await hre.ethers.getContract('HeliosGlobals');
 await heliosGlobals.hls()
 //'0x0b932e28000A132fd25A36795f4Fd5F4557693DA'
+await globals.isValidPoolFactory("0xE7E4320c9b36cC3E0CD2b6Cac56A4ca10A7A89DE");
+false
 ```
+
 
 ### Using functions
 Go in order:
